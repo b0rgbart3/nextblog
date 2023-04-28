@@ -1,64 +1,30 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 
 
 const inter = Inter({ subsets: ['latin'] })
 
-// This function gets called at build time
-export async function getStaticProps() {
-  // Call an external API endpoint to get posts
-  const res = await fetch('http://localhost:3000/api/data');
-
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  // Recommendation: handle errors
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error('Failed to fetch data');
-  }
-
-  const posts = await res.json();
-  console.log('GOT POSTS!: ', posts);
 
 
-  // By returning { props: { posts } }, the Blog component
-  // will receive `posts` as a prop at build time
-  return {
-    props: {
-      posts,
-    },
-  }
-}
-
-// async function getData() {
-//   const res = await fetch('/api/data');
-
-//   // The return value is *not* serialized
-//   // You can return Date, Map, Set, etc.
-
-//   // Recommendation: handle errors
-//   if (!res.ok) {
-//     // This will activate the closest `error.js` Error Boundary
-//     throw new Error('Failed to fetch data');
-//   }
-
-//   const data = await res.json();
-//   console.log('GOT DATA!: ', data);
-
-// }
-// getData();
-
-export default function Home(props: any) {
+export default function Home() {
  
-  
-  console.log('----------------------');
-  console.log('PROPS: ', props);
-  const posts = props.posts.data;
+  const [data, setData] = useState([])
+  const [isLoading, setLoading] = useState(false)
 
+  useEffect(() => {
+    setLoading(true)
+    fetch('http://localhost:3000/api/data')
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data.data)
+        setLoading(false)
+      })
+  }, [])
+
+  
   const handlePost = useCallback((event: any) => {
     event.preventDefault();
     console.log('Event: ', event);
@@ -101,6 +67,9 @@ export default function Home(props: any) {
     alert(`Is this your post title: ${result.data.title}`)
   }
 
+  if (isLoading) return <p>Loading...</p>
+  if (!data) return <p>No post data</p>
+
   return (
     <>
         <div className='mainList'>
@@ -109,7 +78,7 @@ export default function Home(props: any) {
     <div className='list'>
 
     <ul className='listItems'>
-      {posts.length && (posts.map((post : any) => {
+      {data && data.length && (data.map((post : any) => {
         const newDate = new Date(post.updatedAt);
         const dateString = format(newDate, 'MMM dd yyyy');
         return (
