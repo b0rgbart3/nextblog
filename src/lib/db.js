@@ -14,7 +14,7 @@ export async function connectBlogDB() {
     console.log('connection: ', connection);
 }
 
-export async function excuteQuery({ query, values }) {
+export async function executeQuery({ query, values }) {
   try {
 
     const connection = await db.connect();

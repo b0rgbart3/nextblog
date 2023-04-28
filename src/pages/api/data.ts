@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { connectBlogDB, excuteQuery } from '../../lib/db';
+import { connectBlogDB, executeQuery } from '../../lib/db';
 type Data = { data: [{
   title: string,
   post: string
@@ -22,7 +22,7 @@ export default async function handler (
   connectBlogDB();
   console.log('back from connecting, about to send back data');
 
-  const data = await excuteQuery({query: 'SELECT * FROM blogger.Posts', values:''});
+  const data = await executeQuery({query: 'SELECT * FROM blogger.Posts', values:''});
   
   console.log('GOT DATA From database: ', data);
   // Guard clause checks for first and last name,

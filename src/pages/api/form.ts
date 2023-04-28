@@ -2,10 +2,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 
-import { connectBlogDB, executeQuery } from '../../lib/db';
-
-
-
 type Data = { data: {
   title: string,
   post: string
