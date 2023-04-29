@@ -1,6 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { connectBlogDB, executeQuery } from '../../lib/db';
+import NextCors from 'nextjs-cors';
+
 type Data = { data: [{
   title: string,
   post: string
@@ -10,6 +12,14 @@ type Data = { data: [{
 export default async function handler (
   req: NextApiRequest,
   res: NextApiResponse<Data>) {
+
+    await NextCors(req, res, {
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+      origin: '*',
+      optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+   });
+
+
   // Get data submitted in request's body.
   const body = req.body
   
