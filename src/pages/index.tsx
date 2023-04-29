@@ -78,14 +78,14 @@ export default function Home() {
     <div className='list'>
 
     <ul className='listItems'>
-      {data && data.length && (data.map((post : any) => {
-        const newDate = new Date(post.updatedAt);
-        const dateString = format(newDate, 'MMM dd yyyy');
+      {data && data.length && (data.map((post : any, index: number) => {
+        // const newDate = new Date(post.updatedAt);
+        // const dateString = format(newDate, 'MMM dd yyyy');
         return (
-        <li key={post.title}>
-          <div className='dates'>{dateString}</div>
+        <li key={index}>
+          {/* <div className='dates'>{dateString}</div> */}
           <div>{post.title}</div>
-          <div className='bodyText'>{post.body}</div>
+          <div className='bodyText'>{post.post}</div>
           {/* <div>{post.category}</div> */}
         </li>
       )})
