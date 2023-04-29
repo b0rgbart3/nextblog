@@ -1,12 +1,16 @@
 import mysql from 'serverless-mysql';
 
+const config =    {
+  host:      process.env.DB_HOST,
+  database:  process.env.DB,
+  user:      process.env.DB_USER,
+  password:  process.env.DB_USER_PASSWORD
+};
+
+console.log('config: ', config);
+
 const db = mysql({
-  config: {
-    host:      process.env.DB_HOST,
-    database:  process.env.DB,
-    user:      process.env.DB_USER,
-    password:  process.env.DB_USER_PASSWORD
-  }
+  config:config
 });
 
 
