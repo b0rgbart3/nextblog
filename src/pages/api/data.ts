@@ -44,6 +44,9 @@ export default async function handler (
 
   // Found the name.
   // Sends a HTTP success code
+  if (data.error) {
+    res.status(400);
+  } 
   res.status(200).json({data: data });
 }
 
