@@ -32,7 +32,7 @@ export default async function handler (
   connectBlogDB();
   console.log('back from connecting, about to send back data');
 
-  const data = await executeQuery({query: 'SELECT * FROM blogger.Posts', values:''});
+  const data = await executeQuery({query: 'SELECT * FROM Posts', values:''});
   
   console.log('GOT DATA From database: ', data);
   // Guard clause checks for first and last name,
