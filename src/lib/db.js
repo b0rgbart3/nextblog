@@ -8,9 +8,10 @@ const db = mysql({
     password:  process.env.DB_USER_PASSWORD
   }
 });
-console.log('db: ', process.env.DB_USER);
+
 
 export async function connectBlogDB() {
+  console.log('db: ', process.env.DB_USER);
     const connection = db.connect()
     console.log('connection: ', connection);
 }
