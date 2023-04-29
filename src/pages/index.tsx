@@ -16,7 +16,7 @@ export default function Home() {
 
   useEffect(() => {
     setLoading(true)
-    fetch('http://localhost:3000/api/data')
+    fetch('/api/data')
       .then((res) => res.json())
       .then((data) => {
         setData(data.data)
