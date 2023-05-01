@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { establishConnection, executeQuery, simpleQuery } from '@/lib/db'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 
@@ -27,9 +28,10 @@ export default function handler (
 
 
   //connectBlogDB();
- 
-
-  //executeQuery({query: 'INSERT INTO Posts (title, body)', values: body});
+  establishConnection();
+  const queryString = `INSERT INTO Posts (title, post) VALUES ( '${body.title}', '${body.post}' );`
+  console.log('My query: ', queryString);
+  simpleQuery(queryString)
   
 
 
@@ -42,6 +44,6 @@ export default function handler (
 
   // Found the name.
   // Sends a HTTP success code
-  res.status(200).json({ data: { title:body.title, post: body.post}});
+  res.status(200).json({ data: { title:body.title, post: body.post}})
 }
 

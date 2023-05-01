@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { connectBlogDB, executeQuery } from '../../lib/db';
+import { connectBlogDB, executeQuery, getData } from '../../lib/db';
 import NextCors from 'nextjs-cors';
 
 type Data = { data: [{
@@ -29,10 +29,11 @@ export default async function handler (
   // in the command line where next.js app is running.
 //   console.log('body: ', body)
 
-  connectBlogDB();
-  console.log('back from connecting, about to send back data');
+  //connectBlogDB();
+  //console.log('back from connecting, about to send back data');
 
-  const data = await executeQuery({query: 'SELECT * FROM Posts', values:''});
+  
+  const data = await getData();
   
   console.log('GOT DATA From database: ', data);
   // Guard clause checks for first and last name,

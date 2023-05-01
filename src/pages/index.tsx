@@ -14,7 +14,7 @@ export default function Home() {
   const [data, setData] = useState([])
   const [isLoading, setLoading] = useState(false)
 
-  useEffect(() => {
+  const grabData = useCallback(() => {
     setLoading(true)
     fetch('/api/data')
       .then((res) => res.json())
@@ -22,13 +22,12 @@ export default function Home() {
         setData(data.data)
         setLoading(false)
       })
+  },[])
+
+  useEffect(() => {
+   grabData()
   }, [])
 
-  
-  const handlePost = useCallback((event: any) => {
-    event.preventDefault();
-    console.log('Event: ', event);
-  }, []);
 
   const handleSubmit = async (event: any) => {
     // Stop the form from submitting and refreshing the page.
@@ -65,6 +64,7 @@ export default function Home() {
     // If server returns the name submitted, that means the form works.
     const result = await response.json()
     alert(`Is this your post title: ${result.data.title}`)
+    grabData()
   }
 
   if (isLoading) return <p>Loading...</p>
