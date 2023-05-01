@@ -13,6 +13,16 @@ const db = mysql({
   config:config
 });
 
+export interface PostData {
+  id: number
+  title: string
+  post: string
+}
+
+export interface PostDataResponse {
+  data?: PostData[]
+  error?: Error
+}
 
 export async function connectBlogDB() {
   console.log('db: ', process.env.DB_USER);
@@ -32,19 +42,8 @@ export async function establishConnection() {
   }
 
 }
-export async function executeQuery({ query, values }) {
-  try {
 
-    const connection = await db.connect()
-    const results = await db.query(query, values)
-    await db.end()
-    return results;
-  } catch (error) {
-    return { error }
-  }
-}
-
-export async function simpleQuery(query) {
+export async function simpleQuery(query: string) {
   try {
     establishConnection() 
     const results = await db.query(query)

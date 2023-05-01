@@ -1,13 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { connectBlogDB, executeQuery, getData } from '../../lib/db';
+import { getData, PostDataResponse } from '../../lib/db';
 import NextCors from 'nextjs-cors';
 
 type Data = { data: [{
   title: string,
-  post: string
-}]
-}
+  post: string}], error?: Error} 
 
 export default async function handler (
   req: NextApiRequest,
@@ -33,7 +31,7 @@ export default async function handler (
   //console.log('back from connecting, about to send back data');
 
   
-  const data = await getData();
+  const data: Data = await getData() as Data
   
   console.log('GOT DATA From database: ', data);
   // Guard clause checks for first and last name,
@@ -48,6 +46,8 @@ export default async function handler (
   if (data.error) {
     res.status(400);
   } 
-  res.status(200).json({data: data });
+
+
+  res.status(200).json(data);
 }
 

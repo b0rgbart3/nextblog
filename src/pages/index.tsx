@@ -19,7 +19,7 @@ export default function Home() {
     fetch('/api/data')
       .then((res) => res.json())
       .then((data) => {
-        setData(data.data)
+        setData(data)
         setLoading(false)
       })
   },[])
