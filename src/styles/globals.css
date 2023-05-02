@@ -147,14 +147,15 @@ padding:20px;
   color:rgb(205, 242, 248, 1);
   background: rgba(28, 41, 99,  .5);
   border-radius:50%;
-  font-size:24px;
-  width:44px;
-  height:44px;
+  font-size:20px;
+  width:40px;
+  height:40px;
   position: absolute;
-  top:0;
-  right:0;
+  top:6px;
+  right:6px;
   padding-top:8px;
   padding-left:11px;
+  padding-right:10px;
 }
 
 .trash:hover {
@@ -185,12 +186,29 @@ padding:20px;
   margin-right:10px;
 }
 
+.tabs div.selected {
+  background-color:white;
+}
+
+.tabs div.ghost {
+  background-color:rgba(245, 251, 249,.4);
+  background: linear-gradient(175deg, rgb(202, 238, 228) 0%, rgb(126, 187, 178) 100%);
+  opacity: .4;
+}
+
 .tabs div:hover {
-  background-color: white;
+}
+
+.tabs div.ghost:hover {
+  background:rgba(251, 251, 251,1);
+  opacity: 1;
 }
 
 .list {
-  background-color: rgba(224, 252, 250, 0.52);
+  /* background-color: rgba(224, 252, 250, 0.52); */
+  background: rgb(255,255,255);
+/* background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 44%, rgba(134,230,250,1) 100%); */
+background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 100%);
   border-left: 1px solid rgb(28, 41, 99);
   border-right: 1px solid rgb(28, 41, 99);
   border-bottom: 1px solid rgb(28, 41, 99);
@@ -198,4 +216,5 @@ padding:20px;
   padding:4px;
   padding-top:14px;
   padding-bottom:0px;
+  margin-bottom:20px;
 }

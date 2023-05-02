@@ -122,11 +122,13 @@ export default function Home() {
   if (isLoading) return <p>Loading...</p>
   if (!data) return <p>No post data</p>
 
+
   return (
     <>
         <div className='mainList'>
 <div className='tabs'>
-    <div onClick={()=>selectTab(0)}>Previous Musings</div> <div onClick={()=>selectTab(1)}>Archived</div>
+    <div onClick={()=>selectTab(0)} className={tab===0?'selected':'ghost'}>Previous Musings</div>
+    <div onClick={()=>selectTab(1)} className={tab===1?'selected':'ghost'}>Archived</div>
     </div>
     <div className='list'>
 
