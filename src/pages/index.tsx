@@ -3,15 +3,22 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
 
 const inter = Inter({ subsets: ['latin'] })
 
 
+export interface Post {
+  created_at: string,
+  title: string,
+  post: string,
+  user_deleted: boolean
+}
 
 export default function Home() {
  
-  const [data, setData] = useState([])
+  const [data, setData] = useState([]) 
   const [isLoading, setLoading] = useState(false)
 
   const grabData = useCallback(() => {
@@ -24,14 +31,44 @@ export default function Home() {
       })
   },[])
 
-  const deletePost = useCallback((index: number) => {
-    setLoading(true)
-    fetch('/api/delete?id=' + index)
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data)
+  const deletePost = useCallback((post: any) => {
+
+    console.log('Looking for post id: ', post.id);
+    
+    if (post.user_deleted) {
+      //restore
+      setLoading(true)
+      fetch('/api/restore?id=' + post.id)
+        .then((res) => res.json())
+       .then((data) => {
+         setData(data)
         setLoading(false)
-      })
+       })
+    } else {
+      setLoading(true)
+         fetch('/api/delete?id=' + post.id)
+           .then((res) => res.json())
+          .then((data) => {
+            setData(data)
+           setLoading(false)
+          })
+        }
+
+  // if (postIndex !== -1) {
+
+  //   const post = data[postIndex]
+  //   if (post && post['user_deleted']) {
+  //     console.log('About to restore a deleted post.')
+  //   } } 
+  //   else {
+  //   setLoading(true)
+  //   fetch('/api/delete?id=' + index)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setData(data)
+  //       setLoading(false)
+  //     })
+  //   }
   },[])
 
   useEffect(() => {
@@ -95,13 +132,14 @@ export default function Home() {
         // const newDate = new Date(post.updatedAt);
         // const dateString = format(newDate, 'MMM dd yyyy');
         const rowStyle = post.user_deleted ? 'markedAsDeleted' : '';
+        const iconStyle = post.user_deleted ? 'fas fa-undo fa-trash-alt' : 'fas fa-trash-alt'
         return (
         <li key={post.id} className={rowStyle}>
           {/* <div className='dates'>{dateString}</div> */}
          
           <div>{post.title}</div>
           <div className='bodyText'>{post.post}</div>
-          <div onClick={()=>deletePost(post.id)}>delete</div>
+          <div className='trash' onClick={()=>deletePost(post)}><i className={iconStyle}></i></div>
           {/* <div>{post.category}</div> */}
         </li>
       )})

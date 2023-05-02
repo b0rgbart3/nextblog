@@ -4,6 +4,7 @@ import { getData, PostDataResponse } from '../../lib/db';
 import NextCors from 'nextjs-cors';
 
 type Data = { data: [{
+  created_at: string,
   title: string,
   post: string}], error?: Error} 
 
@@ -33,7 +34,7 @@ export default async function handler (
   
   const data: Data = await getData() as Data
   
- // console.log('GOT DATA From database: ', data);
+  //console.log('GOT DATA From database: ', data);
   // Guard clause checks for first and last name,
   // and returns early if they are not found
 //   if (!body.title || !body.post) {
