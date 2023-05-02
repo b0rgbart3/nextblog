@@ -24,6 +24,16 @@ export default function Home() {
       })
   },[])
 
+  const deletePost = useCallback((index: number) => {
+    setLoading(true)
+    fetch('/api/delete?id=' + index)
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data)
+        setLoading(false)
+      })
+  },[])
+
   useEffect(() => {
    grabData()
   }, [])
@@ -39,6 +49,9 @@ export default function Home() {
       post: event.target.post.value,
     }
 
+    if (data.title === undefined || data.post === undefined) {
+      return;
+    }
     // Send the data to the server in JSON format.
     const JSONdata = JSON.stringify(data)
 
@@ -81,11 +94,14 @@ export default function Home() {
       {data && data.length && (data.map((post : any, index: number) => {
         // const newDate = new Date(post.updatedAt);
         // const dateString = format(newDate, 'MMM dd yyyy');
+        const rowStyle = post.user_deleted ? 'markedAsDeleted' : '';
         return (
-        <li key={index}>
+        <li key={post.id} className={rowStyle}>
           {/* <div className='dates'>{dateString}</div> */}
+         
           <div>{post.title}</div>
           <div className='bodyText'>{post.post}</div>
+          <div onClick={()=>deletePost(post.id)}>delete</div>
           {/* <div>{post.category}</div> */}
         </li>
       )})

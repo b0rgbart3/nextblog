@@ -28,11 +28,7 @@ export default function handler (
 
 
   //connectBlogDB();
-  establishConnection();
-  const queryString = `INSERT INTO Posts (title, post) VALUES ( '${body.title}', '${body.post}' );`
-  console.log('My query: ', queryString);
-  simpleQuery(queryString)
-  
+
 
 
   // Guard clause checks for first and last name,
@@ -41,6 +37,12 @@ export default function handler (
     // Sends a HTTP bad request error code
     return res.status(400).json({ data: {title:'First or last name not found', post:'' }})
   }
+
+  establishConnection();
+  const queryString = `INSERT INTO Posts (title, post) VALUES ( '${body.title}', '${body.post}' );`
+  console.log('My query: ', queryString);
+  simpleQuery(queryString)
+  
 
   // Found the name.
   // Sends a HTTP success code
