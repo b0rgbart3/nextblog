@@ -14,9 +14,11 @@ const db = mysql({
 });
 
 export interface PostData {
+  created_at: string
   id: number
   title: string
   post: string
+  updated_at: string
 }
 
 export interface PostDataResponse {

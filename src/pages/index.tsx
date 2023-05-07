@@ -26,13 +26,12 @@ export default function Home() {
   const [tab, setTab] = useState(0)
 
   const selectTab = useCallback((selection: number) => {
+    console.log('Setting tab to :', selection);
     setTab(selection)
   },[])
 
   const setPageData = useCallback((data: any) => {
-    console.log('got data: ', data)
     let mainListData = data.filter((post: any) => !post.user_deleted)
-    console.log('Main: ', mainListData)
     let archiveListData = data.filter((post: any) => post.user_deleted)
     setMainList(mainListData)
     setArchiveList(archiveListData)
@@ -50,9 +49,6 @@ export default function Home() {
   },[])
 
   const deletePost = useCallback((post: any) => {
-
-    console.log('Looking for post id: ', post.id);
-    
     if (post.user_deleted) {
       setLoading(true)
       fetch('/api/restore?id=' + post.id)
@@ -76,6 +72,44 @@ export default function Home() {
   useEffect(() => {
    grabData()
   }, [])
+
+  function renderListing(list: any[]) {
+    return (
+    <ul className='listItems'>
+    {list && list.length && (list.map((post : any, index: number) => {
+      const newDate = new Date(post.updated_at)
+      const dateString = format(newDate, 'MMM dd yyyy')
+
+      //const dateString = post.updated_at
+      console.log('DateString: ', dateString)
+      const rowStyle = post.user_deleted ? 'markedAsDeleted' : ''
+      const iconStyle = post.user_deleted ? 'fas fa-undo fa-trash-alt' : 'fas fa-trash-alt'
+      return (
+      <li key={post.id} className={rowStyle}>
+        <div className='dates'>{dateString}</div>
+       
+        <div>{post.title}</div>
+        <div className='bodyText'>{post.post}</div>
+        <div className='trash' onClick={()=>deletePost(post)}><i className={iconStyle}></i></div>
+        {/* <div>{post.category}</div> */}
+      </li>
+    )})
+    )}
+  </ul>)
+
+  }
+  function renderForm() {
+    return (<>
+      <div className='poster'>What&apos;s on your mind today?</div>
+
+      <form onSubmit={handleSubmit} method="post">
+        <input type='text' className='simpleInput' placeholder='Title' id='title'/><br></br>
+        <textarea className='mainText' placeholder='What are you thinking?' id='post'/><br/>
+        <button type='submit'>POST</button>
+      </form>
+      </>
+    )
+  }
 
 
   const handleSubmit = async (event: any) => {
@@ -125,66 +159,19 @@ export default function Home() {
 
   return (
     <>
-        <div className='mainList'>
-<div className='tabs'>
-    <div onClick={()=>selectTab(0)} className={tab===0?'selected':'ghost'}>Previous Musings</div>
-    <div onClick={()=>selectTab(1)} className={tab===1?'selected':'ghost'}>Archived</div>
-    </div>
-    <div className='list'>
-
-{tab === 0 && (
-    <ul className='listItems'>
-      {mainList && mainList.length && (mainList.map((post : any, index: number) => {
-        // const newDate = new Date(post.updatedAt);
-        // const dateString = format(newDate, 'MMM dd yyyy');
-        const rowStyle = post.user_deleted ? 'markedAsDeleted' : '';
-        const iconStyle = post.user_deleted ? 'fas fa-undo fa-trash-alt' : 'fas fa-trash-alt'
-        return (
-        <li key={post.id} className={rowStyle}>
-          {/* <div className='dates'>{dateString}</div> */}
-         
-          <div>{post.title}</div>
-          <div className='bodyText'>{post.post}</div>
-          <div className='trash' onClick={()=>deletePost(post)}><i className={iconStyle}></i></div>
-          {/* <div>{post.category}</div> */}
-        </li>
-      )})
-      )}
-    </ul>)}
-
-    {tab === 1 && (
-    <ul className='listItems'>
-      {archiveList && archiveList.length && (archiveList.map((post : any, index: number) => {
-        // const newDate = new Date(post.updatedAt);
-        // const dateString = format(newDate, 'MMM dd yyyy');
-        const rowStyle = post.user_deleted ? 'markedAsDeleted' : '';
-        const iconStyle = post.user_deleted ? 'fas fa-undo fa-trash-alt' : 'fas fa-trash-alt'
-        return (
-        <li key={post.id} className={rowStyle}>
-          {/* <div className='dates'>{dateString}</div> */}
-         
-          <div>{post.title}</div>
-          <div className='bodyText'>{post.post}</div>
-          <div className='trash' onClick={()=>deletePost(post)}><i className={iconStyle}></i></div>
-          {/* <div>{post.category}</div> */}
-        </li>
-      )})
-      )}
-    </ul>)}
-    </div>
-
-
-
+    <div className='mainList'>
+        <div className='tabs'>
+          <div onClick={()=>selectTab(0)} className={tab===0?'selected':'ghost'}>Previous Musings</div>
+          <div onClick={()=>selectTab(1)} className={tab===1?'selected':'ghost'}>Archived</div>
+          <div onClick={()=>selectTab(2)} className={tab===2?'selected muse':'ghost muse'}>Post +</div>
+        </div>
+        <div className='list'>
+            {tab === 0 && (renderListing(mainList))}
+            {tab === 1 && (renderListing(archiveList))}
+            {tab === 2 && (renderForm())}
+        </div>
 
     </div>
-    <div className='poster'>What&apos;s on your mind today?</div>
-
-    <form onSubmit={handleSubmit} method="post">
-      <input type='text' className='simpleInput' placeholder='Title' id='title'/><br></br>
-      <textarea className='mainText' placeholder='What are you thinking?' id='post'/><br/>
-      <button type='submit'>POST</button>
-    </form>
-
     </>
   )
 }

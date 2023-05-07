@@ -6,7 +6,8 @@ import NextCors from 'nextjs-cors';
 type Data = { data: [{
   created_at: string,
   title: string,
-  post: string}], error?: Error} 
+  post: string,
+  updated_at: string}], error?: Error} 
 
 export default async function handler (
   req: NextApiRequest,
