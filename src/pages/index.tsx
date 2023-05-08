@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
-import { format } from 'date-fns'
+import { format, zonedTimeToUtc } from 'date-fns-tz'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 
 
@@ -78,7 +78,9 @@ export default function Home() {
     <ul className='listItems'>
     {list && list.length && (list.map((post : any, index: number) => {
       const newDate = new Date(post.updated_at)
-      const dateString = format(newDate, 'MMM dd yyyy')
+      const timeZone = 'America/Los_Angeles';
+      const utcDate = zonedTimeToUtc(newDate, timeZone);
+      const dateString = format(utcDate, 'MMM dd, yyyy h:mm a', {timeZone})
 
       //const dateString = post.updated_at
       console.log('DateString: ', dateString)
@@ -153,12 +155,26 @@ export default function Home() {
     grabData()
   }
 
-  if (isLoading) return <p>Loading...</p>
+  function renderSpinner() {
+    if (isLoading) {
+      return ( <div className='spinner'>
+        <div className="loading"></div></div>
+        )
+    } else {
+      return (
+        <div className='spacer'></div>
+      )
+    }
+
+
+  }
+
   if (!data) return <p>No post data</p>
 
 
   return (
     <>
+    {renderSpinner()}
     <div className='mainList'>
         <div className='tabs'>
           <div onClick={()=>selectTab(0)} className={tab===0?'selected':'ghost'}>Previous Musings</div>

@@ -14,7 +14,7 @@ body {
 
 body {
   color: rgb(28, 41, 99);
-  background-color: rgb(167, 212, 219);
+  background-color: #a7d4db;
   font-weight: 500;
   font-family: 'Carlito', sans-serif;
   font-size: 28px;
@@ -125,7 +125,8 @@ padding:20px;
 }
 
 .dates {
-  font-size:19px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:14px;
   opacity: .5;
   line-height: 170%;
 }
@@ -140,7 +141,7 @@ padding:20px;
 }
 
 .markedAsDeleted {
-  opacity:.25;
+  opacity:.5;
 }
 
 .trash {
@@ -207,7 +208,7 @@ padding:20px;
 .muse {
   position: absolute;
   right:70px;
-  top:20px;
+  top:30px;
   min-width: 150px;
   text-align: center;
 }
@@ -218,11 +219,39 @@ padding:20px;
 /* background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 44%, rgba(134,230,250,1) 100%); */
 background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 100%);
   border-left: 1px solid rgb(28, 41, 99);
-  border-right: 1px solid rgb(28, 41, 99);
+  border-right: 1px solid #1c2963;
   border-bottom: 1px solid rgb(28, 41, 99);
   border-radius: 0 10px 10px 10px;
   padding:4px;
   padding-top:14px;
   padding-bottom:0px;
   margin-bottom:20px;
+}
+
+.spinner {
+  width:100vw;
+  height:10px;
+  text-align: center;
+}
+
+.loading {
+  width: 20%;
+  height: 10px;
+  background-color: #1c2963;
+  animation-name: example;
+  animation-duration: 4s;
+  position:relative;
+  animation-iteration-count: infinite;
+}
+
+
+@keyframes example {
+  0%   {background-color: rgba(28, 41, 99, .3); left: 0px; width: 20%;}
+  50%  {background-color: #36aded; left: 90%; width: 50%;}
+  100% {background-color: rgba(28, 41, 99,.4); left: 0px; width: 20%;}
+}
+
+.spacer {
+  height:10px;
+  width:100%;
 }
