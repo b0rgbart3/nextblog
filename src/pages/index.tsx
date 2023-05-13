@@ -23,6 +23,7 @@ export default function Home() {
   const [isLoading, setLoading] = useState(false)
   const [mainList, setMainList] = useState([])
   const [archiveList, setArchiveList] = useState([])
+  const [error, setError] = useState(false)
   const [tab, setTab] = useState(0)
 
   const selectTab = useCallback((selection: number) => {
@@ -31,11 +32,15 @@ export default function Home() {
   },[])
 
   const setPageData = useCallback((data: any) => {
-    let mainListData = data.filter((post: any) => !post.user_deleted)
-    let archiveListData = data.filter((post: any) => post.user_deleted)
+    if (data && !data.error) {
+    let mainListData = data.data.filter((post: any) => !post.user_deleted)
+    let archiveListData = data.data.filter((post: any) => post.user_deleted)
     setMainList(mainListData)
     setArchiveList(archiveListData)
     setData(data)
+    } else {
+      setError(true)
+    }
   }, [])
 
   const grabData = useCallback(() => {
@@ -43,6 +48,7 @@ export default function Home() {
     fetch('/api/data')
       .then((res) => res.json())
       .then((data) => {
+        console.log('DATA: ', data);
         setPageData(data)
         setLoading(false)
       })
@@ -175,6 +181,7 @@ export default function Home() {
   return (
     <>
     {renderSpinner()}
+    {!error && (
     <div className='mainList'>
         <div className='tabs'>
           <div onClick={()=>selectTab(0)} className={tab===0?'selected':'ghost'}>Previous Musings</div>
@@ -187,7 +194,12 @@ export default function Home() {
             {tab === 2 && (renderForm())}
         </div>
 
-    </div>
+    </div>)}
+    {error && (
+      <div className='error'>
+        There is a problem either connecting or receiving data from the database.
+      </div>
+    )}
     </>
   )
 }

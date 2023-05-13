@@ -242,16 +242,35 @@ background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 
   animation-duration: 4s;
   position:relative;
   animation-iteration-count: infinite;
+  border-radius: 5px;
 }
 
 
 @keyframes example {
-  0%   {background-color: rgba(28, 41, 99, .3); left: 0px; width: 20%;}
-  50%  {background-color: #36aded; left: 90%; width: 50%;}
-  100% {background-color: rgba(28, 41, 99,.4); left: 0px; width: 20%;}
+  /* 0%   {background-color: rgba(28, 41, 99, .05); left: 0px; width: 10%;}
+  25%  {background-color: rgba(28, 41, 99, .4); left: 40%; width: 20%;}
+  50%  {background-color: rgba(28, 41, 99, .05); left: 90%; width: 10%;}
+  75%  {background-color: rgba(28, 41, 99, .4); left: 40%; width: 20%;}
+  100% {background-color: rgba(28, 41, 99, .05); left: 0px; width: 10%;} */
+  0%   {background-color: rgba(28, 41, 99, .4); left: 0px; width: 20%;}
+  50%  {background-color: rgba(28, 41, 99, .4); left: 70%; width: 30%;}
+  60%  {background-color: rgba(28, 41, 99, .4); left: 90%; width: 10%;}
+  90%  {background-color: rgba(28, 41, 99, .4); left: 10%; width: 30%;}
+  100%  {background-color: rgba(28, 41, 99, .4); left: 0%; width: 10%;}
 }
 
 .spacer {
   height:10px;
   width:100%;
+}
+
+.error {
+  background-color: pink;
+  background: pink;
+  border:2px solid rgb(153, 14, 14);
+  border-radius: 4px;
+  margin:20px;
+  color:rgb(153, 14, 14);
+  font-size:16px;
+  padding:20px;
 }

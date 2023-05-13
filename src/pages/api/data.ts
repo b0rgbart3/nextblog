@@ -2,12 +2,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getData, PostDataResponse } from '../../lib/db';
 import NextCors from 'nextjs-cors';
+import { merge_sort } from '../../../sortTest';
 
-type Data = { data: [{
-  created_at: string,
-  title: string,
-  post: string,
-  updated_at: string}], error?: Error} 
+export interface Post {
+  id?: number;
+    title: string;
+    post?: string;
+    created_at?: string;
+    user_deleted?: boolean;
+    updated_at?: string;
+}
+
+type Data = { data: Post[], error?: Error} 
 
 export default async function handler (
   req: NextApiRequest,
@@ -24,7 +30,7 @@ export default async function handler (
   const body = req.body
   
 
-  console.log('In the API');
+  //console.log('In the API');
   // Optional logging to see the responses
   // in the command line where next.js app is running.
 //   console.log('body: ', body)
@@ -35,7 +41,7 @@ export default async function handler (
   
   const data: Data = await getData() as Data
   
-  //console.log('GOT DATA From database: ', data);
+  console.log('GOT DATA From database: ', data);
   // Guard clause checks for first and last name,
   // and returns early if they are not found
 //   if (!body.title || !body.post) {
@@ -46,10 +52,19 @@ export default async function handler (
   // Found the name.
   // Sends a HTTP success code
   if (data.error) {
+    console.log('GOT AN ERROR!');
+    res.status(500).json(data);
+  } 
+  
+  const dataArray: any = JSON.parse(JSON.stringify(data));
+  //dataArray.sort( compare );
+  if (dataArray.error) {
     res.status(400);
   } 
-
-
-  res.status(200).json(data);
+ 
+  let newList = merge_sort(dataArray);
+ // console.log('newItems: ', sorted);
+  res.status(200).json({data: newList});
 }
+
 
