@@ -171,7 +171,7 @@ padding:20px;
 .tabs {
   display: flex;
   padding:0;
-  
+  font-size:24px;
 }
 
 .tabs div {
@@ -183,6 +183,7 @@ padding:20px;
   cursor: pointer;
   display: inline;
   padding:10px;
+  padding-right:30px;
   margin:0px;
   margin-right:10px;
 }
@@ -213,7 +214,7 @@ padding:20px;
   text-align: center;
 }
 
-.list {
+.output {
   /* background-color: rgba(224, 252, 250, 0.52); */
   background: rgb(255,255,255);
 /* background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 44%, rgba(134,230,250,1) 100%); */
@@ -273,4 +274,40 @@ background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 
   color:rgb(153, 14, 14);
   font-size:16px;
   padding:20px;
+}
+
+.sorters {
+  display: flex;
+  font-size:16px;
+  padding:6px;
+  border-bottom:1px solid rgba(28, 41, 99, .25);
+  padding-bottom:12px;
+  margin-bottom:10px;
+}
+
+.sorters div {
+
+}
+
+.sorters div.chip {
+  background:rgba(28, 41, 99, .25);
+  /* border: 2px solid rgba(28, 41, 99, 1);; */
+  background: linear-gradient(180deg, rgb(236, 238, 246) 0%, rgba(178, 188, 233,.5) 30%);
+  border-radius: 4px;
+  padding:6px;
+  text-align: center;
+  text-transform:uppercase;
+  min-width:100px;
+  margin-left:10px;
+  opacity:.25;
+  cursor: pointer;
+}
+
+.sorters div.chip:hover {
+  opacity:1;
+}
+
+.sorters div.chip.chosen {
+  background: linear-gradient(180deg, rgb(236, 238, 246) 0%, rgba(178, 188, 233,.5) 30%);
+  opacity:.8;
 }

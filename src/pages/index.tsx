@@ -4,25 +4,29 @@ import { Inter } from 'next/font/google'
 import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { format, zonedTimeToUtc } from 'date-fns-tz'
 import '@fortawesome/fontawesome-free/css/all.min.css'
+import { sortByColumn } from '../../sortTest'
 
 
 const inter = Inter({ subsets: ['latin'] })
 
 
 export interface Post {
+  id: number,
   created_at: string,
   title: string,
   post: string,
-  user_deleted: boolean
+  user_deleted: boolean,
+  updated_at: string
 }
 
 
 export default function Home() {
  
-  const [data, setData] = useState([]) 
+  const [data, setData] = useState<Post[]>([]) 
   const [isLoading, setLoading] = useState(false)
-  const [mainList, setMainList] = useState([])
-  const [archiveList, setArchiveList] = useState([])
+  const [mainList, setMainList] = useState<Post[]>([])
+  const [archiveList, setArchiveList] = useState<Post[]>([])
+  const [sortBy, setSortBy] = useState('title')
   const [error, setError] = useState(false)
   const [tab, setTab] = useState(0)
 
@@ -31,12 +35,27 @@ export default function Home() {
     setTab(selection)
   },[])
 
+  const chooseDate = useCallback(() => {
+    console.log('Sort by Date');
+    let newData: Post[] = sortByColumn(mainList, 'date');
+    setMainList(newData)
+    setSortBy('date')
+  },[mainList])
+  const chooseTitle = useCallback(() => {
+    console.log('Sort by Title');
+    console.log('mainList: ', mainList);
+    let newData: Post[] = sortByColumn(mainList, 'title');
+    setMainList(newData)
+    setSortBy('title')
+  },[mainList])
+
   const setPageData = useCallback((data: any) => {
     if (data && !data.error) {
     let mainListData = data.data.filter((post: any) => !post.user_deleted)
     let archiveListData = data.data.filter((post: any) => post.user_deleted)
     setMainList(mainListData)
     setArchiveList(archiveListData)
+    console.log('Setting Main list to: ', mainListData);
     setData(data)
     } else {
       setError(true)
@@ -89,7 +108,7 @@ export default function Home() {
       const dateString = format(utcDate, 'MMM dd, yyyy h:mm a', {timeZone})
 
       //const dateString = post.updated_at
-      console.log('DateString: ', dateString)
+     // console.log('DateString: ', dateString)
       const rowStyle = post.user_deleted ? 'markedAsDeleted' : ''
       const iconStyle = post.user_deleted ? 'fas fa-undo fa-trash-alt' : 'fas fa-trash-alt'
       return (
@@ -181,20 +200,29 @@ export default function Home() {
   return (
     <>
     {renderSpinner()}
-    {!error && (
+    {!error && (<>
+
     <div className='mainList'>
         <div className='tabs'>
           <div onClick={()=>selectTab(0)} className={tab===0?'selected':'ghost'}>Previous Musings</div>
           <div onClick={()=>selectTab(1)} className={tab===1?'selected':'ghost'}>Archived</div>
           <div onClick={()=>selectTab(2)} className={tab===2?'selected muse':'ghost muse'}>Post +</div>
         </div>
-        <div className='list'>
-            {tab === 0 && (renderListing(mainList))}
-            {tab === 1 && (renderListing(archiveList))}
-            {tab === 2 && (renderForm())}
+        <div className='output'>
+          {tab !== 2 && (
+          <div className='sorters'>
+            <div>Sort by:</div>
+            <div className={sortBy==='title' ? 'chip chosen' : 'chip'} onClick={chooseTitle}>Title</div>
+            <div className={sortBy==='date' ? 'chip chosen' : 'chip'} onClick={chooseDate}>Date</div>
+          </div>)}
+          <div className='list'>
+              {tab === 0 && (renderListing(mainList))}
+              {tab === 1 && (renderListing(archiveList))}
+              {tab === 2 && (renderForm())}
+          </div>
         </div>
 
-    </div>)}
+    </div></>)}
     {error && (
       <div className='error'>
         There is a problem either connecting or receiving data from the database.
