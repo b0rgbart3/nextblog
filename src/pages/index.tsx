@@ -37,15 +37,19 @@ export default function Home() {
 
   const chooseDate = useCallback(() => {
     console.log('Sort by Date');
-    let newData: Post[] = sortByColumn(mainList, 'date');
-    setMainList(newData)
+    let newMain: Post[] = sortByColumn(mainList, 'date');
+    setMainList(newMain)
+    let newArchive: Post[] = sortByColumn(archiveList, 'date');
+    setArchiveList(newArchive)
     setSortBy('date')
   },[mainList])
   const chooseTitle = useCallback(() => {
     console.log('Sort by Title');
     console.log('mainList: ', mainList);
-    let newData: Post[] = sortByColumn(mainList, 'title');
-    setMainList(newData)
+    let newMain: Post[] = sortByColumn(mainList, 'title');
+    setMainList(newMain)
+    let newArchive: Post[] = sortByColumn(archiveList, 'title');
+    setArchiveList(newArchive)
     setSortBy('title')
   },[mainList])
 
@@ -212,8 +216,9 @@ export default function Home() {
           {tab !== 2 && (
           <div className='sorters'>
             <div>Sort by:</div>
-            <div className={sortBy==='title' ? 'chip chosen' : 'chip'} onClick={chooseTitle}>Title</div>
+         
             <div className={sortBy==='date' ? 'chip chosen' : 'chip'} onClick={chooseDate}>Date</div>
+            <div className={sortBy==='title' ? 'chip chosen' : 'chip'} onClick={chooseTitle}>Title</div>
           </div>)}
           <div className='list'>
               {tab === 0 && (renderListing(mainList))}

@@ -24,13 +24,14 @@ export default async function handler (
 
   const data: Data = await getData() as Data
 
- // console.log('GOT DATA From database: ', data);
-
-  if (data.error) {
+  const dataArray: any = JSON.parse(JSON.stringify(data));
+  //dataArray.sort( compare );
+  if (dataArray.error) {
     res.status(400);
   } 
-
-
-  res.status(200).json(data);
+ 
+  //let newList = merge_sort(dataArray);
+ // console.log('newItems: ', sorted);
+  res.status(200).json({data: dataArray});
 }
 
