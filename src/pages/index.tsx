@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google'
 import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { format, zonedTimeToUtc } from 'date-fns-tz'
 import '@fortawesome/fontawesome-free/css/all.min.css'
-import { sortByColumn } from '../../sortTest'
+import { sortByColumn } from '@/lib/sorting'
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -27,13 +27,14 @@ export default function Home() {
   const [mainList, setMainList] = useState<Post[]>([])
   const [archiveList, setArchiveList] = useState<Post[]>([])
 
-  const [sortBy, setSortBy] = useState('date')
+  const [sortBy, setSortBy] = useState('')
   const [error, setError] = useState(false)
   const [tab, setTab] = useState(0)
 
 
   useEffect(() => {
     const storedData = localStorage.getItem('sortBy');
+    console.log('loaded from local storage: ', storedData)
     if (storedData) {
       setSortBy(storedData);
     }
@@ -79,14 +80,25 @@ export default function Home() {
 
   const grabData = useCallback(() => {
     setLoading(true)
+    console.log('sortyBy before sending data request: ', sortBy)
+    if (sortBy && sortBy !==''){
+      console.log('Sending data request.')
     fetch('/api/data')
       .then((res) => res.json())
       .then((data) => {
         console.log('DATA: ', data);
+        //data = []
+        if (!data || !data.data || data.length < 1 || data.data.length < 1) {
+          setError(true)
+        } else {
+          data.data = sortByColumn(data.data,sortBy)
         setPageData(data)
+        }
         setLoading(false)
+        
       })
-  },[])
+    }
+  },[sortBy])
 
   const deletePost = useCallback((post: any) => {
     if (post.user_deleted) {
@@ -111,7 +123,7 @@ export default function Home() {
 
   useEffect(() => {
    grabData()
-  }, [])
+  }, [sortBy])
 
   function renderListing(list: any[]) {
     return (

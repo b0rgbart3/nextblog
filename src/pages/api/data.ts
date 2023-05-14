@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getData, PostDataResponse } from '../../lib/db';
 import NextCors from 'nextjs-cors';
 import { merge_sort } from '../../../sortTest';
+import { sortByColumn } from '@/lib/sorting';
 
 export interface Post {
   id?: number;
@@ -26,9 +27,17 @@ export default async function handler (
    });
 
 
+
   // Get data submitted in request's body.
   const body = req.body
-  
+  // let query = req.query?.sort ? req.query?.sort : 'date'
+  // if (query) {
+  //   console.log('GOT a QUERY: ', query)
+  //   if (Array.isArray(query)) {
+  //     query = query[0]
+  //   } 
+  // }
+  // console.log('Query was set to: ', query)
 
   //console.log('In the API');
   // Optional logging to see the responses
@@ -62,9 +71,9 @@ export default async function handler (
     res.status(400);
   } 
  
-  let newList = merge_sort(dataArray);
+  // let newList = sortByColumn(dataArray, query);
  // console.log('newItems: ', sorted);
-  res.status(200).json({data: newList});
+  res.status(200).json({data: dataArray});
 }
 
 
