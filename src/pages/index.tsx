@@ -26,9 +26,18 @@ export default function Home() {
   const [isLoading, setLoading] = useState(false)
   const [mainList, setMainList] = useState<Post[]>([])
   const [archiveList, setArchiveList] = useState<Post[]>([])
-  const [sortBy, setSortBy] = useState('title')
+
+  const [sortBy, setSortBy] = useState('date')
   const [error, setError] = useState(false)
   const [tab, setTab] = useState(0)
+
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('sortBy');
+    if (storedData) {
+      setSortBy(storedData);
+    }
+  }, []);
 
   const selectTab = useCallback((selection: number) => {
     console.log('Setting tab to :', selection);
@@ -42,6 +51,7 @@ export default function Home() {
     let newArchive: Post[] = sortByColumn(archiveList, 'date');
     setArchiveList(newArchive)
     setSortBy('date')
+    localStorage.setItem('sortBy', 'date')
   },[mainList])
   const chooseTitle = useCallback(() => {
     console.log('Sort by Title');
@@ -51,6 +61,7 @@ export default function Home() {
     let newArchive: Post[] = sortByColumn(archiveList, 'title');
     setArchiveList(newArchive)
     setSortBy('title')
+    localStorage.setItem('sortBy', 'title')
   },[mainList])
 
   const setPageData = useCallback((data: any) => {
