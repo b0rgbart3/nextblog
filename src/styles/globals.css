@@ -106,6 +106,7 @@ padding:20px;
 
 .list {
   font-size:24px;
+
 }
 
 .listItems {
@@ -170,19 +171,23 @@ padding:20px;
 .tabs {
   display: flex;
   padding:0;
-  font-size:24px;
+  font-size:20px;
+  justify-content:space-between;
+  margin-right:3.2%;
+  margin-left:4%;
+  user-select: none;
 }
 
 .tabs div {
-  background-color: rgba(224, 252, 250, 0.52);
+  /* background-color: rgba(224, 252, 250, 0.52); */
   /* border-left: 1px solid rgb(28, 41, 99);
   border-right: 1px solid rgb(28, 41, 99);
   border-top: 1px solid rgb(28, 41, 99); */
+  /* background:black; */
   border-radius: 10px 10px 0 0;
   cursor: pointer;
-  display: inline;
   padding:10px;
-  padding-right:30px;
+  padding-right:14px;
   margin:0px;
   margin-right:10px;
 }
@@ -191,27 +196,20 @@ padding:20px;
   background-color:white;
 }
 
-.tabs div.ghost {
+.ghost {
   background-color:rgba(245, 251, 249,.4);
-  background: linear-gradient(175deg, rgb(202, 238, 228) 0%, rgb(126, 187, 178) 100%);
-  opacity: .4;
+  background: linear-gradient(175deg, rgb(202, 238, 228) 0%,rgb(202, 238, 228) 50%, rgb(61, 117, 108) 100%);
+  opacity: .6;
 }
 
 .tabs div:hover {
 }
 
-.tabs div.ghost:hover {
+.ghost:hover {
   background:rgba(251, 251, 251,1);
   opacity: 1;
 }
 
-.muse {
-  position: absolute;
-  right:70px;
-  top:30px;
-  min-width: 150px;
-  text-align: center;
-}
 
 .output {
   /* background-color: rgba(224, 252, 250, 0.52); */
@@ -221,11 +219,14 @@ background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 
   /* border-left: 1px solid rgb(28, 41, 99);
   border-right: 1px solid #1c2963;
   border-bottom: 1px solid rgb(28, 41, 99); */
+  box-shadow: 4px 4px 8px rgba(31, 59, 78,.5);
   border-radius: 0 10px 10px 10px;
   padding:4px;
   padding-top:14px;
   padding-bottom:0px;
-  margin-bottom:20px;
+  margin-left:4%;
+  margin-right:4%;
+  min-width:420px;
 }
 
 .spinner {
@@ -309,4 +310,38 @@ background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 
 .sorters div.chip.chosen {
   background: linear-gradient(180deg, rgb(236, 238, 246) 0%, rgba(178, 188, 233,.5) 30%);
   opacity:.8;
+}
+
+#muse {
+  padding-left:14px;
+  padding-right:40px;
+  top:30px;
+  text-align: center;
+  margin-left:auto;
+  margin-right:40px;
+  /* background-color: magenta; */
+  /* background: white; */
+  user-select: none;
+}
+
+#muse.ghost {
+    /* background-color:magenta;
+    background: linear-gradient(175deg, rgb(202, 210, 238) 0%,rgb(132, 147, 255) 50%, rgb(96, 6, 110) 100%); */
+    opacity: .6;
+}
+
+#muse.ghost:hover {
+  /* background-color:magenta;
+  background: linear-gradient(175deg, rgb(244, 246, 253) 30%,rgb(196, 132, 255) 70%, rgb(140, 0, 162) 100%); */
+  opacity: .6;
+}
+
+.rowStyle {
+
+  cursor: pointer;
+}
+
+.rowStyle:hover {
+  background:white;
+  border-bottom:1px solid rgb(151, 1, 151);
 }

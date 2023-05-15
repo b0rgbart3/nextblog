@@ -26,54 +26,20 @@ export default async function handler (
       optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
    });
 
-
-
-  // Get data submitted in request's body.
-  const body = req.body
-  // let query = req.query?.sort ? req.query?.sort : 'date'
-  // if (query) {
-  //   console.log('GOT a QUERY: ', query)
-  //   if (Array.isArray(query)) {
-  //     query = query[0]
-  //   } 
-  // }
-  // console.log('Query was set to: ', query)
-
-  //console.log('In the API');
-  // Optional logging to see the responses
-  // in the command line where next.js app is running.
-//   console.log('body: ', body)
-
-  //connectBlogDB();
-  //console.log('back from connecting, about to send back data');
-
-  
   const data: Data = await getData() as Data
-  
-  //console.log('GOT DATA From database: ', data);
-  // Guard clause checks for first and last name,
-  // and returns early if they are not found
-//   if (!body.title || !body.post) {
-//     // Sends a HTTP bad request error code
-//     return res.status(400).json({ data: {title:'First or last name not found', post:'' }})
-//   }
 
-  // Found the name.
-  // Sends a HTTP success code
   if (data.error) {
     console.log('GOT AN ERROR!');
-    res.status(500).json(data);
+    return res.status(500).json(data);
   } 
   
   const dataArray: any = JSON.parse(JSON.stringify(data));
-  //dataArray.sort( compare );
+
   if (dataArray.error) {
-    res.status(400);
+    return res.status(400);
   } 
  
-  // let newList = sortByColumn(dataArray, query);
- // console.log('newItems: ', sorted);
-  res.status(200).json({data: dataArray});
+  return res.status(200).json({data: dataArray});
 }
 
 

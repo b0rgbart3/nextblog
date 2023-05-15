@@ -1,15 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { establishConnection, simpleQuery } from '@/lib/db'
 import type { NextApiRequest, NextApiResponse } from 'next'
-
+import { Post } from '..'
 
 type Data = { data: {
-  title: string,
-  post: string
-}
-}
+    title: string,
+    post: string
+  }
+  }
 
-export default function handler (
+export default async function handler (
   req: NextApiRequest,
   res: NextApiResponse<Data>) {
   // Get data submitted in request's body.
@@ -21,24 +21,29 @@ export default function handler (
   console.log('body: ', body)
 
 
+  // connectBlogDB();
+
+
+  // connectBlogDB();
+
+
+  //connectBlogDB();
+
+
+
   // Guard clause checks for first and last name,
   // and returns early if they are not found
-  if (!body.title || !body.post) {
-    // Sends a HTTP bad request error code
-    return res.status(400).json({ data: {title:'First or last name not found', post:'' }})
-  }
+//   if (!body.title || !body.post) {
+//     // Sends a HTTP bad request error code
+//     return res.status(400)
+//   }
 
+ 
     establishConnection();
-    const queryString = `INSERT INTO Posts (title, post) VALUES ( '${body.title}', '${body.post}' );`
+    const queryString = `UPDATE Posts SET title = '${body.title}', post= '${body.post}', updated_at = NOW() WHERE id='${body.id}';`
     console.log('My query: ', queryString);
     const response = simpleQuery(queryString)
-  
 
-
-  
-
-  // Found the name.
-  // Sends a HTTP success code
-  return res.status(200).json({ data: { title:body.title, post: body.post}})
+    return res.status(200).json({ data: { title:body.title, post: body.post}})
 }
 
