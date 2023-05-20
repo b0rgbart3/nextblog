@@ -27,7 +27,7 @@ export default function Landing() {
   const [mainList, setMainList] = useState<Post[]>([])
   const [archiveList, setArchiveList] = useState<Post[]>([])
 
-  const [sortBy, setSortBy] = useState('')
+  const [sortBy, setSortBy] = useState('date')
   const [error, setError] = useState(false)
   const [tab, setTab] = useState(0)
   const [editPostId, setEditPostId] = useState(0)
