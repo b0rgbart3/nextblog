@@ -20,7 +20,7 @@ export interface Post {
 }
 
 
-export default function Landing() {
+export default function Home() {
  
   const [data, setData] = useState<Post[]>([]) 
   const [isLoading, setLoading] = useState(false)
@@ -34,7 +34,7 @@ export default function Landing() {
   const [editingPostObject, setEditingPostObject] = useState({})
   const [editing, setEditing] = useState(false)
   const [dateFilterDirection, setDateFilterDirection] = useState('desc')
-  const [timeFilterDirection, setTimeFilterDirection] = useState('asc')
+  const [titleFilterDirection, setTitleFilterDirection] = useState('desc')
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -65,28 +65,30 @@ export default function Landing() {
 
   const chooseDate = useCallback(() => {
    // console.log('Sort by Date');
-    let newMain: Post[] = sortByColumn(mainList, 'date', timeFilterDirection);
-    setMainList(newMain)
-    let newArchive: Post[] = sortByColumn(archiveList, 'date', timeFilterDirection);
-    setArchiveList(newArchive)
+    // let newMain: Post[] = sortByColumn(mainList, 'date', dateFilterDirection);
+    // setMainList(newMain)
+    // let newArchive: Post[] = sortByColumn(archiveList, 'date', dateFilterDirection);
+    // setArchiveList(newArchive)
     
-    if (sortBy !== 'date') { 
-      setSortBy('date')
+
+    setSortBy('date')
+  
+    if (dateFilterDirection === 'asc') {
+      console.log('Switching to descending')
+      setDateFilterDirection('desc')
+      let newMain: Post[] = sortByColumn(mainList, 'date', 'desc');
+      setMainList(newMain)
+      let newArchive: Post[] = sortByColumn(archiveList, 'date', 'desc');
+      setArchiveList(newArchive)
     } else {
-      if (dateFilterDirection === 'asc') {
-        setDateFilterDirection('desc')
-        let newMain: Post[] = sortByColumn(mainList, 'title', timeFilterDirection);
-        setMainList(newMain)
-        let newArchive: Post[] = sortByColumn(archiveList, 'title', timeFilterDirection);
-        setArchiveList(newArchive)
-      } else {
-        setDateFilterDirection('asc')
-        let newMain: Post[] = sortByColumn(mainList, 'title', timeFilterDirection);
-        setMainList(newMain)
-        let newArchive: Post[] = sortByColumn(archiveList, 'title', timeFilterDirection);
-        setArchiveList(newArchive)
-      }
+      setDateFilterDirection('asc')
+      console.log('Switching to ascending')
+      let newMain: Post[] = sortByColumn(mainList, 'date', 'asc');
+      setMainList(newMain)
+      let newArchive: Post[] = sortByColumn(archiveList, 'date', 'asc');
+      setArchiveList(newArchive)
     }
+    
 
     localStorage.setItem('sortBy', 'date')
   },[mainList])
@@ -94,9 +96,9 @@ export default function Landing() {
   const chooseTitle = useCallback(() => {
     console.log('Sort by Title');
     console.log('mainList: ', mainList);
-    let newMain: Post[] = sortByColumn(mainList, 'title', timeFilterDirection);
+    let newMain: Post[] = sortByColumn(mainList, 'title', titleFilterDirection);
     setMainList(newMain)
-    let newArchive: Post[] = sortByColumn(archiveList, 'title', timeFilterDirection);
+    let newArchive: Post[] = sortByColumn(archiveList, 'title', titleFilterDirection);
     setArchiveList(newArchive)
     setSortBy('title')
     localStorage.setItem('sortBy', 'title')
@@ -128,7 +130,7 @@ export default function Landing() {
         if (!data || !data.data || data.length < 1 || data.data.length < 1) {
           setError(true)
         } else {
-          data.data = sortByColumn(data.data,sortBy, timeFilterDirection)
+          data.data = sortByColumn(data.data,sortBy, dateFilterDirection)
         setPageData(data)
         }
         setLoading(false)
@@ -286,7 +288,7 @@ export default function Landing() {
           // Get the response data from server as JSON.
           // If server returns the name submitted, that means the form works.
           const result = await response.json()
-          alert(`Edited your post: ${result.data.title}`)
+          // alert(`Edited your post: ${result.data.title}`)
           setTab(0)
 
     } else {
@@ -373,19 +375,42 @@ export default function Landing() {
 
   return (
     <>
-    <Link href="home">
-    <div className='landing'><div className='landing-inner'>the Stories <br/>I tell myself
-        <div className='landing-subhead'>-a digital diary</div>
-        
-        {/* <div className='cover-buttons'>
-          <div className='cover-button'>start reading</div>
-          <div className='cover-button'>start writing</div>
-        </div> */}
-        
-        </div>
-    </div>
+    {renderSpinner()}
+    <div className='homelinkDiv'><div className='homelink'><Link href="/">Back home</Link></div></div>
+    {!error && (<>
 
-    </Link>
+    <div className='mainList'>
+        <div className='tabs'>
+          {!editing && (
+          <>
+          <div onClick={() => selectTab(0)} className={tab === 0 ? 'selected' : 'ghost'}>Previous Musings</div>
+          <div onClick={() => selectTab(1)} className={tab === 1 ? 'selected' : 'ghost'}>Archived</div>
+          </>)
+          }
+          <div onClick={()=>{setEditing(false); setEditPostId(0); setEditingPostObject({})
+            selectTab(2)}} className={tab===2?'selected':'ghost'} id="muse">Post +</div>
+        </div>
+        <div className='output'>
+          {tab !== 2 && (
+          <div className='sorters'>
+            <div>Sort by:</div>
+            <div className={sortBy==='date' ? 'chip chosen' : 'chip'} onClick={chooseDate}>
+              Date <div className={'arrow ' + dateFilterDirection}></div></div>
+            <div className={sortBy==='title' ? 'chip chosen' : 'chip'} onClick={chooseTitle}>Title</div>
+          </div>)}
+          <div className='list'>
+              {tab === 0 && (renderListing(mainList))}
+              {tab === 1 && (renderListing(archiveList))}
+              {tab === 2 && (renderForm)}
+          </div>
+        </div>
+
+    </div></>)}
+    {error && (
+      <div className='error'>
+        There is a problem either connecting or receiving data from the database.
+      </div>
+    )}
     </>
   )
 }

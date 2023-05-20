@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { establishConnection, simpleQuery } from '@/lib/db'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Post } from '..'
+import { Post } from '../home'
 
 type Data = { data: {
     title: string,

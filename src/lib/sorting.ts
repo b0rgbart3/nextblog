@@ -10,7 +10,7 @@ interface Post {
 
 type Data = { data: Post[], error?: Error} 
 
-export function sortByColumn(arr: Post[], column: string): Post[] {
+export function sortByColumn(arr: Post[], column: string, direction: string): Post[] {
 
     if (arr.length <= 1) {
   
@@ -28,30 +28,38 @@ export function sortByColumn(arr: Post[], column: string): Post[] {
         // and then get merged (recursively)
         // and return the final completed merged array
   
-        return merger(sortByColumn(left, column), sortByColumn(right, column), column);
+        return merger(sortByColumn(left, column, direction), sortByColumn(right, column, direction), column, direction);
     }
   }
   
-  function isSmaller(left: Post, right: Post, sorter: string) {
+  function isSmaller(left: Post, right: Post, sorter: string, direction: string) {
       //left[0].title.localeCompare(right[0].title
       switch(sorter) {
         case 'title':
+          if (direction === 'asc') {
           return left.title.localeCompare(right.title) < 0
+          } else {
+            return left.title.localeCompare(right.title) > 0
+          }
           break;
         case 'date':
+
+          if (direction === 'asc') {
           let leftDate = new Date(left.updated_at);
           let rightDate = new Date(right.updated_at);
-         // console.log('comparing: ', leftDate, ' with: ', rightDate)
-         if (leftDate < rightDate) {
-          console.log(leftDate ,', is earlier than: ', rightDate);
-         }
   
           return leftDate < rightDate
+        } else {
+          let leftDate = new Date(left.updated_at);
+          let rightDate = new Date(right.updated_at);
+      
+          return rightDate < leftDate
+        }
           break;
         default: break;
       }
   }
-  function merger(left: Post[], right: Post[], column: string) {
+  function merger(left: Post[], right: Post[], column: string, direction: string) {
   
      let merged: Post[] = [];
    
@@ -80,7 +88,7 @@ export function sortByColumn(arr: Post[], column: string): Post[] {
              else {
           
               //left[0].title.localeCompare(right[0].title
-                 if (isSmaller(left[0], right[0], column)) {
+                 if (isSmaller(left[0], right[0], column, direction)) {
      
                    const leftShifted = left.shift();
                    if (leftShifted) {
@@ -90,7 +98,7 @@ export function sortByColumn(arr: Post[], column: string): Post[] {
                  }
                  else {
                   // right[0].title.localeCompare(left[0].title) < 0
-                     if (isSmaller(right[0], left[0], column)) {
+                     if (isSmaller(right[0], left[0], column, direction)) {
                 
                        const rightShifted = right.shift()
                        if (rightShifted)
