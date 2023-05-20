@@ -6,6 +6,7 @@ import { format, zonedTimeToUtc } from 'date-fns-tz'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import { sortByColumn } from '@/lib/sorting'
 import Link from 'next/link';
+import { title } from 'process'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -34,16 +35,30 @@ export default function Home() {
   const [editingPostObject, setEditingPostObject] = useState({})
   const [editing, setEditing] = useState(false)
   const [dateFilterDirection, setDateFilterDirection] = useState('desc')
-  const [titleFilterDirection, setTitleFilterDirection] = useState('desc')
+  const [titleFilterDirection, setTitleFilterDirection] = useState('asc')
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  useEffect(() => {
-    const storedData = localStorage.getItem('sortBy');
-    console.log('loaded from local storage: ', storedData)
-    if (storedData) {
-      setSortBy(storedData);
+  const grabFromLocal = useCallback(() => {
+  //  console.log('getting local storage values:');
+    const storedSortBy = localStorage.getItem('sortBy') ? localStorage.getItem('sortBy') : 'date'
+   // console.log('loaded from local storage: ', storedSortBy)
+    if (storedSortBy) {
+      setSortBy(storedSortBy);
     }
+
+    const storedDateDirection = localStorage.getItem('dateDirection') ? localStorage.getItem('dateDirection') : 'desc'
+   // console.log('loaded date direction: ', storedDateDirection)
+    if (storedDateDirection) {
+      setDateFilterDirection(storedDateDirection);
+    }
+
+    const storedTitleDirection = localStorage.getItem('titleDirection') ? localStorage.getItem('titleDirection') : 'asc'
+    console.log('loaded title direction: ', storedTitleDirection)
+    if (storedTitleDirection) {
+      setTitleFilterDirection(storedTitleDirection);
+    }
+    return {by: storedSortBy, dd: storedDateDirection, td: storedTitleDirection}
   }, []);
 
 
@@ -64,14 +79,15 @@ export default function Home() {
   },[])
 
   const chooseDate = useCallback(() => {
-   // console.log('Sort by Date');
-    // let newMain: Post[] = sortByColumn(mainList, 'date', dateFilterDirection);
-    // setMainList(newMain)
-    // let newArchive: Post[] = sortByColumn(archiveList, 'date', dateFilterDirection);
-    // setArchiveList(newArchive)
     
-
-    setSortBy('date')
+    if (sortBy !== 'date') {
+      setSortBy('date')
+      let newMain: Post[] = sortByColumn(mainList, 'date', dateFilterDirection);
+      setMainList(newMain)
+      let newArchive: Post[] = sortByColumn(archiveList, 'date', dateFilterDirection);
+      setArchiveList(newArchive)
+    }
+    else {
   
     if (dateFilterDirection === 'asc') {
       console.log('Switching to descending')
@@ -80,6 +96,10 @@ export default function Home() {
       setMainList(newMain)
       let newArchive: Post[] = sortByColumn(archiveList, 'date', 'desc');
       setArchiveList(newArchive)
+
+      console.log('setting localStorage to: ', 'desc');
+      localStorage.setItem('dateDirection', 'desc');
+
     } else {
       setDateFilterDirection('asc')
       console.log('Switching to ascending')
@@ -87,24 +107,61 @@ export default function Home() {
       setMainList(newMain)
       let newArchive: Post[] = sortByColumn(archiveList, 'date', 'asc');
       setArchiveList(newArchive)
+
+      console.log('setting localStorage to: ', 'asc');
+      localStorage.setItem('dateDirection', 'asc');
     }
-    
+  }
 
     localStorage.setItem('sortBy', 'date')
+
   },[mainList])
   
   const chooseTitle = useCallback(() => {
-    console.log('Sort by Title');
-    console.log('mainList: ', mainList);
-    let newMain: Post[] = sortByColumn(mainList, 'title', titleFilterDirection);
-    setMainList(newMain)
-    let newArchive: Post[] = sortByColumn(archiveList, 'title', titleFilterDirection);
-    setArchiveList(newArchive)
-    setSortBy('title')
+  //  console.log('Sort by Title');
+  //  console.log('mainList: ', mainList);
+    if (sortBy !== 'title') {
+      setSortBy('title')
+      if (titleFilterDirection === 'asc') {
+      let newMain: Post[] = sortByColumn(mainList, 'title', 'desc');
+      setMainList(newMain)
+      let newArchive: Post[] = sortByColumn(archiveList, 'title', 'desc');
+      setArchiveList(newArchive)
+      } else {
+        let newMain: Post[] = sortByColumn(mainList, 'title', 'asc');
+        setMainList(newMain)
+        let newArchive: Post[] = sortByColumn(archiveList, 'title', 'asc');
+        setArchiveList(newArchive)
+      }
+    }
+    else {
+
+    if (titleFilterDirection === 'desc') {
+      setTitleFilterDirection('asc');
+      console.log('setting titleFilter direction to asc');
+      localStorage.setItem('titleDirection', 'asc');
+      let newMain: Post[] = sortByColumn(mainList, 'title', 'desc');
+      setMainList(newMain)
+      let newArchive: Post[] = sortByColumn(archiveList, 'title', 'desc');
+      setArchiveList(newArchive)
+    } else {
+      setTitleFilterDirection('desc');
+      console.log('setting titleFilter direction to desc');
+      localStorage.setItem('titleDirection', 'desc');
+      let newMain: Post[] = sortByColumn(mainList, 'title', 'asc');
+      setMainList(newMain)
+      let newArchive: Post[] = sortByColumn(archiveList, 'title', 'asc');
+      setArchiveList(newArchive)
+    }
+  }
+ 
     localStorage.setItem('sortBy', 'title')
+    
   },[mainList])
 
   const setPageData = useCallback((data: any) => {
+    console.log('In set page data.');
+   // grabFromLocal();
     if (data && !data.error) {
     let mainListData = data.data.filter((post: any) => !post.user_deleted)
     let archiveListData = data.data.filter((post: any) => post.user_deleted)
@@ -118,26 +175,43 @@ export default function Home() {
   }, [])
 
   const grabData = useCallback(() => {
-    setLoading(true)
+    const sortingParams = grabFromLocal()
+   setLoading(true)
   
-    if (sortBy && sortBy !==''){
+    console.log('grabbing')
+    // if (sortBy && sortBy !==''){
+      console.log('sort by: ', sortingParams.by);
+      console.log('direction: ', sortingParams.dd);
    
     fetch('/api/data')
       .then((res) => res.json())
       .then((data) => {
  
         //data = []
+        console.log('Getting data.');
         if (!data || !data.data || data.length < 1 || data.data.length < 1) {
           setError(true)
         } else {
-          data.data = sortByColumn(data.data,sortBy, dateFilterDirection)
+          if (sortingParams.by === 'date') {
+            data.data = sortByColumn(data.data,sortBy, sortingParams.dd ? sortingParams.dd : 'desc')
+          }
+          else {
+            console.log('Sorting by title');
+            if (sortingParams.td === 'asc') {
+              console.log('sort direction is asc');
+            data.data = sortByColumn(data.data, 'title', 'desc')
+            } else {
+              data.data = sortByColumn(data.data,'title', 'asc')
+            }
+          }
+         
         setPageData(data)
         }
         setLoading(false)
         
       })
-    }
-  },[sortBy])
+  //  }
+  },[dateFilterDirection, sortBy, titleFilterDirection])
 
   const deletePost = useCallback((post: any) => {
     if (post.user_deleted) {
@@ -216,7 +290,7 @@ export default function Home() {
 
   useEffect(() => {
    grabData()
-  }, [sortBy])
+  }, [])
 
   function renderListing(list: any[]) {
     return (
@@ -396,7 +470,8 @@ export default function Home() {
             <div>Sort by:</div>
             <div className={sortBy==='date' ? 'chip chosen' : 'chip'} onClick={chooseDate}>
               Date <div className={'arrow ' + dateFilterDirection}></div></div>
-            <div className={sortBy==='title' ? 'chip chosen' : 'chip'} onClick={chooseTitle}>Title</div>
+            <div className={sortBy==='title' ? 'chip chosen' : 'chip'} onClick={chooseTitle}>
+              Title<div className={'arrow ' + titleFilterDirection}></div></div>
           </div>)}
           <div className='list'>
               {tab === 0 && (renderListing(mainList))}
