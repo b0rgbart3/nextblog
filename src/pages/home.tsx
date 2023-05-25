@@ -7,6 +7,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
 import { sortByColumn } from '@/lib/sorting'
 import Link from 'next/link';
 import { title } from 'process'
+import {htmlEscape, htmlUnescape} from 'escape-goat';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -36,6 +37,7 @@ export default function Home() {
   const [editing, setEditing] = useState(false)
   const [dateFilterDirection, setDateFilterDirection] = useState('desc')
   const [titleFilterDirection, setTitleFilterDirection] = useState('asc')
+  const [expanded, setExpanded] = useState(false)
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -213,7 +215,10 @@ export default function Home() {
   //  }
   },[dateFilterDirection, sortBy, titleFilterDirection])
 
-  const deletePost = useCallback((post: any) => {
+  const deletePost = useCallback((post: any, event: React.MouseEvent<HTMLDivElement>) => {
+    console.log('got here.');
+    event.preventDefault();
+    event.stopPropagation();
     if (post.user_deleted) {
       setLoading(true)
       fetch('/api/restore?id=' + post.id)
@@ -290,31 +295,81 @@ export default function Home() {
 
   useEffect(() => {
    grabData()
+
   }, [])
 
-  function renderListing(list: any[]) {
-    return (
-    <ul className='listItems'>
-    {list && list.length && (list.map((post : any, index: number) => {
-      const newDate = new Date(post.updated_at)
-      const timeZone = 'America/Los_Angeles';
-      const utcDate = zonedTimeToUtc(newDate, timeZone);
-      const dateString = format(utcDate, 'MMM dd, yyyy h:mm a', {timeZone})
+  function sanitizeTextareaValue(inputValue: string) {
+    let sanitizedValue = htmlEscape(inputValue)
+    sanitizedValue = sanitizedValue.trim()
 
-      const rowStyle = post.user_deleted ? 'rowStyle markedAsDeleted' : 'rowStyle'
-      const iconStyle = post.user_deleted ? 'fas fa-undo fa-trash-alt' : 'fas fa-trash-alt'
-      return (
-      <li key={post.id} className={rowStyle} onClick={()=>editPost(post.id)}>
-        <div className='dates'>{dateString}</div>
-       
-        <div>{post.title}</div>
-        <div className='bodyText'>{post.post}</div>
-        <div className='trash' onClick={()=>deletePost(post)}><i className={iconStyle}></i></div>
-        {/* <div>{post.category}</div> */}
-      </li>
-    )})
-    )}
-  </ul>)
+    // Perform additional validation or manipulation if required
+    return sanitizedValue;
+  }
+
+  function renderItems(list: any[]) {
+
+    return (<>
+      <ul className='listItems'>
+      {list && list.length && (list.map((post : any, index: number) => {
+        const newDate = new Date(post.updated_at)
+        const timeZone = 'America/Los_Angeles';
+        const utcDate = zonedTimeToUtc(newDate, timeZone);
+        const dateString = format(utcDate, 'MMM dd, yyyy h:mm a', {timeZone})
+  
+        const rowStyle = post.user_deleted ? 'rowStyle markedAsDeleted' : 'rowStyle'
+        const iconStyle = post.user_deleted ? 'fas fa-undo fa-trash-alt' : 'fas fa-trash-alt'
+        return (<>
+        <li key={post.id} className={rowStyle} onClick={()=>editPost(post.id)}>
+          <div className='dates'>{dateString}</div>
+         
+          <div>{htmlUnescape(post.title)}</div>
+          <div className='bodyText'>{htmlUnescape(post.post)}</div>
+          <div className='trash' onClick={(event)=>deletePost(post, event)}><i className={iconStyle}></i></div>
+          {/* <div>{post.category}</div> */}
+        </li></>
+      )})
+      )}     
+    </ul></>)
+  }
+
+  function expandDivider() {
+    setExpanded(!expanded)
+  }
+
+  function renderDivider(list: any[]) {
+    let dividerClassName = 'accordian'
+    if (expanded) {
+      dividerClassName += ' expanded'
+    }
+    return (
+      <><div className={dividerClassName}><div onClick={expandDivider}>DIVIDER</div>
+      {   renderItems(list)  }
+      </div></>
+    )
+  }
+
+  function renderListing(list: any[], listName: string) {
+
+    let renderList = []
+    let myJSX
+    let myJSX2
+    let divider
+    
+    switch (listName) {
+      case 'main':
+        renderList = list
+        return renderItems(renderList)
+        break;
+      case 'archive':
+        renderList = list.slice(0, 5)
+        myJSX = renderItems(renderList)
+        renderList = list.slice(5, list.length);
+        divider = renderDivider(renderList)
+        return [myJSX, divider]
+        break
+      default: break
+    }
+  
   }
 
   const handleSubmit = async (event: any) => {
@@ -323,19 +378,25 @@ export default function Home() {
 
     // Get data from the form.
 
-    console.log('EVENT: ', event)
     if (event.target.title === undefined || event.target.post === undefined) {
       return;
     }
-    // Send the data to the server in JSON format.
- 
+    // Send the data to the server in JSON format. 
+    const postContent = event.target.post.value;
+
 
     if (editing) {
-       const data = {
+
+      const postTitle = sanitizeTextareaValue(event.target.title.value).trim()
+      const postContent = sanitizeTextareaValue(event.target.post.value).trim()
+
+
+      const data = {
         id: editPostId,
-        title: event.target.title.value,
-        post: event.target.post.value,
+        title: postTitle,
+        post: postContent,
       }
+
       const JSONdata = JSON.stringify(data)
       setEditingPostObject(data)
           // API endpoint where we send form data.
@@ -366,11 +427,16 @@ export default function Home() {
           setTab(0)
 
     } else {
-      const data = {
-        title: event.target.title.value,
-        post: event.target.post.value,
-      }
-      const JSONdata = JSON.stringify(data)
+
+          const postTitle = sanitizeTextareaValue(event.target.title.value).trim()
+          const postContent = sanitizeTextareaValue(event.target.post.value).trim()
+
+
+          const data = {
+            title: postTitle,
+            post: postContent,
+          }
+          const JSONdata = JSON.stringify(data)
           // API endpoint where we send form data.
           const endpoint = '/api/form'
 
@@ -393,7 +459,7 @@ export default function Home() {
           // Get the response data from server as JSON.
           // If server returns the name submitted, that means the form works.
           const result = await response.json()
-          alert(`Posted: ${result.data.title}`)
+          //alert(`Posted: ${result.data.title}`)
           setTab(0)
     }
     grabData()
@@ -403,19 +469,7 @@ export default function Home() {
     setTab(0)
   }
 
-  function renderSpinner() {
-    if (isLoading) {
-      return ( <div className='spinner'>
-        <div className="loading"></div></div>
-        )
-    } else {
-      return (
-        <div className='spacer'></div>
-      )
-    }
 
-
-  }
 
   const renderForm = useMemo(() => {
     let title = ''
@@ -428,13 +482,13 @@ export default function Home() {
         postBody = postToEdit[0].post
       }
 
-  
     return (<>
       {!editing && (<div className='poster'>What&apos;s on your mind today?</div>)}
 
+
       <form onSubmit={handleSubmit} method="post" ref={formRef}>
-        <input type='text' className='simpleInput' placeholder='Title' defaultValue={title} id='title' name='title'/><br></br> 
-        <textarea className='mainText' defaultValue={postBody} placeholder='Tell us about it...' id='post' name='post'/><br/>
+        <input type='text' className='simpleInput' placeholder='Title' defaultValue={htmlUnescape(title)} id='title' name='title'/><br></br> 
+        <textarea className='mainText' defaultValue={htmlUnescape(postBody)} placeholder='Tell us about it...' id='post' name='post'/><br/>
         {editing && ( <button type='submit'>UPDATE</button>)}
         {!editing && ( <button type='submit'>POST</button>)}
         <button onClick={cancelPost}>CANCEL</button>
@@ -449,8 +503,11 @@ export default function Home() {
 
   return (
     <>
-    {renderSpinner()}
-    <div className='homelinkDiv'><div className='homelink'><Link href="/">Back home</Link></div></div>
+    {isLoading && renderSpinner()}
+    <div className='homelinkDiv'>
+      <div className='homelink'><Link href="/">Back home</Link></div>
+      <div className='homelink'><Link href="/read">Read stories</Link></div>
+    </div>
     {!error && (<>
 
     <div className='mainList'>
@@ -474,8 +531,9 @@ export default function Home() {
               Title<div className={'arrow ' + titleFilterDirection}></div></div>
           </div>)}
           <div className='list'>
-              {tab === 0 && (renderListing(mainList))}
-              {tab === 1 && (renderListing(archiveList))}
+              {tab === 0 && mainList.length > 0 && (renderListing(mainList, 'main'))}
+              {/* {mainList.length < 1 && (<><div>There are no stories yet posted.  Post a story!</div></>)} */}
+              {tab === 1 && (renderListing(archiveList, 'archive'))}
               {tab === 2 && (renderForm)}
           </div>
         </div>
@@ -488,7 +546,16 @@ export default function Home() {
     )}
     </>
   )
+  
 }
 
 
+export function renderSpinner() {
 
+    return ( <div className='spinner'>
+      <div className="loading"></div></div>
+      )
+
+
+
+}

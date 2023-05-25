@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Carlito:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&family=Lobster&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
 
 * {
@@ -50,6 +50,9 @@ a {
   padding-top:14px;
   border-radius:0 0 8px 8px;
   transition: all 0.5s ease;
+  display:inline-block;
+  margin-left:20px;
+  margin-right:20px;
 }
 
 .homelink:hover {
@@ -328,7 +331,7 @@ background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 
 .sorters div.chip {
   background:rgba(28, 41, 99, .25);
   /* border: 2px solid rgba(28, 41, 99, 1);; */
-  background: linear-gradient(180deg, rgb(236, 238, 246) 0%, rgba(178, 188, 233,.5) 30%);
+  /* background: linear-gradient(180deg, rgb(236, 238, 246) 0%, rgba(178, 188, 233,.5) 30%); */
   border-radius: 4px;
   padding:6px;
   font-size:16px;
@@ -354,7 +357,7 @@ background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 
 
 .sorters div.chip.chosen {
   background: linear-gradient(180deg, rgb(236, 238, 246) 0%, rgba(149, 161, 215, 0.75) 30%);
-  opacity:.8;
+  opacity:1;
 }
 
 .sorters div.chip:hover {
@@ -372,14 +375,14 @@ background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 
   content: '';
   border-style: solid;
   border-width: 0px 10px 10px 10px; 
-  border-color: transparent transparent rgba(31, 59, 78,.5) transparent; 
+  border-color: transparent transparent rgb(6, 46, 72) transparent; 
 }
 
 .desc {
   content: '';
   border-style: solid;
   border-width: 10px 10px 0px 10px; /* Adjust size as needed */
-  border-color: rgba(31, 59, 78,.5) transparent transparent transparent; 
+  border-color: rgb(6, 46, 72) transparent transparent transparent; 
 }
 
 
@@ -486,4 +489,92 @@ background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 
   padding:10px;
   margin:20px;
   border-radius:6px;
+}
+
+.accordian {
+  padding:10px;
+  padding-top:10px;
+  margin-top:10px;
+  user-select: none;
+  cursor: pointer;
+  transition: all 3s ease-in;
+}
+
+.accordian.expanded ul {
+  max-height: fit-content;
+}
+
+.accordian ul {
+  max-height:1px;
+  overflow: hidden;
+}
+
+.reading {
+  background:rgb(0, 221, 255);
+  border-radius:20px;
+  padding:40px;
+  width:calc(100% - 100px);
+  height:80vh;
+  text-align: center;
+  margin:50px;
+  box-shadow: 2px 2px 22px rgba(10, 92, 105,.1);
+  background-image:url('/linen.jpeg');
+  text-shadow: 1px 1px 28px rgb(174, 248, 207);
+  transition: all 0.5s ease;
+  position:relative;
+}
+
+.inner-reader {
+  padding-top:100px;
+  width:100%;
+  margin:auto;
+  height: 100%;
+  border:4px solid rgba(9, 70, 114, .25);
+  border-radius:14px;
+  background:white;
+  overflow-y: auto;
+}
+
+.body-container {
+  margin-top:10px;
+  padding:24px;
+  padding-left:34px;
+  padding-right:34px;
+}
+
+.read-body {
+  font-size:24px;
+  font-weight: 400;
+  font-family: 'Carlito', Arial, Helvetica, sans-serif;
+}
+
+.read-title {
+  font-size: 46px;
+  font-weight: 700;
+  font-family: 'Carlito';
+  letter-spacing: -1px;
+}
+
+.next-story {
+  position: absolute;
+  top:2px;
+  right:20px;
+  transform: scaleY(0.6);
+}
+
+.right-arrow {
+  user-select: none;
+  content: '';
+  border-style: solid;
+  border-radius:4px;
+  border-width: 24px;
+  border-color: transparent rgb(6, 46, 72)  rgb(6, 46, 72) transparent; 
+}
+
+.right-arrow-adjust {
+  transform: rotate(-45deg);
+}
+.par {
+  padding-top:10px;
+  text-align: left;
 }
