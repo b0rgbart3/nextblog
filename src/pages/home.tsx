@@ -240,7 +240,8 @@ export default function Home() {
   const deletePost = useCallback((post: any, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
     event.stopPropagation()
-    const confirmDelete = confirm(`Are you quite certain you want to completely delete the post: ${post.title} ?`)
+    
+    const confirmDelete = confirm(`Are you quite certain you want to completely delete the post: ${htmlUnescape(post.title)} ?`)
     if (confirmDelete) {
       setLoading(true)
       fetch('/api/delete?id=' + post.id)
@@ -335,13 +336,15 @@ export default function Home() {
   
         const rowStyle = post.user_deleted ? 'rowStyle markedAsDeleted' : 'rowStyle'
         const iconStyle = post.user_deleted ? 'fas fa-undo' : 'fas fa-archive'
+        const trashStyle = 'fas fa-trash'
+
         return (
         <li key={post.id} className={rowStyle} onClick={()=>editPost(post.id)}>
           <div className='dates'>{dateString}</div>
           <div>{htmlUnescape(post.title)}</div>
           <div className='bodyText'>{htmlUnescape(post.post)}</div>
           <div className={toolTipText} onClick={(event)=>archivePost(post, event)} title={toolTipText}><i className={iconStyle}></i></div>
-          { listName === 'archive' && (<div onClick={(event)=>deletePost(post, event)}>DELETE</div>)}
+          { listName === 'archive' && (<div className='trash' title="DELETE FOREVER" onClick={(event)=>deletePost(post, event)}><i className={trashStyle}></i></div>)}
         </li>
       )})
       )}     
@@ -354,11 +357,13 @@ export default function Home() {
 
   function renderDivider(list: any[]) {
     let dividerClassName = 'accordian'
+    let arrowDirection = 'arrow desc'
     if (expanded) {
       dividerClassName += ' expanded'
+      arrowDirection = 'arrow asc'
     }
     return (
-      <div className={dividerClassName} key='divider'><div onClick={expandDivider}>DIVIDER</div>
+      <div className={dividerClassName} key='divider'><div onClick={expandDivider}>More Archived Stories <div className={arrowDirection}></div></div>
       {   renderItems(list,'archive', true)  }
       </div>
     )
@@ -380,8 +385,12 @@ export default function Home() {
         myJSX = renderItems(renderList, 'archive')
      
         renderList = list.slice(5, list.length);
+        if (renderList.length > 0) {
         divider = renderDivider(renderList)
         return [myJSX, divider]
+        } else {
+          return myJSX
+        }
         break
       default: break
     }
@@ -541,8 +550,8 @@ export default function Home() {
         <div className='tabs'>
           {!editing && (
           <>
-          <div onClick={() => selectTab(0)} className={tab === 0 ? 'selected' : 'ghost'}>Previous Musings</div>
-          <div onClick={() => selectTab(1)} className={tab === 1 ? 'selected' : 'ghost'}>Archived</div>
+          <div onClick={() => selectTab(0)} className={tab === 0 ? 'selected' : 'ghost'}>My Stories</div>
+          <div onClick={() => selectTab(1)} className={tab === 1 ? 'selected' : 'ghost'}>Archived Stories</div>
           </>)
           }
           <div onClick={()=>{setEditing(false); setEditPostId(0); setEditingPostObject({})

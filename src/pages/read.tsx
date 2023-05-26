@@ -94,7 +94,8 @@ export default function Read() {
         {isLoading && renderSpinner()}
         <div className='homelinkDiv'>
       <div className='homelink'><Link href="/">Back home</Link></div>
-      <div className='homelink'><Link href="/home">Edit stories</Link></div>
+      <div className='homelink'><Link href="/home">Edit this story</Link></div>
+      <div className='homelink'><Link href="/home">The List</Link></div>
     </div>
 
         { mainList && mainList.length > 0 && (
