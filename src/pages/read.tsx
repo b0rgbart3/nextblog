@@ -33,7 +33,7 @@ export default function Read() {
         }
       }, [])
 
-      const nextStory = useCallback((event) => {
+      const nextStory = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
   
         event.stopPropagation()
         event.preventDefault()
