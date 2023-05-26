@@ -18,7 +18,7 @@ export default async function handler (
 
     const postToDelete = query.id;
 
-  const queryString = `DELETE FROM Posts WHERE id = ${postToDelete};`
+  const queryString = `UPDATE Posts SET user_deleted = ${true} WHERE id = ${postToDelete};`
   console.log('Query: ', queryString);
   simpleQuery(queryString)
 

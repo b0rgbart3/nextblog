@@ -215,8 +215,7 @@ export default function Home() {
   //  }
   },[dateFilterDirection, sortBy, titleFilterDirection])
 
-  const deletePost = useCallback((post: any, event: React.MouseEvent<HTMLDivElement>) => {
-    console.log('got here.');
+  const archivePost = useCallback((post: any, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
     if (post.user_deleted) {
@@ -229,14 +228,28 @@ export default function Home() {
        })
     } else {
       setLoading(true)
-         fetch('/api/delete?id=' + post.id)
+         fetch('/api/archive?id=' + post.id)
            .then((res) => res.json())
           .then((data) => {
             setPageData(data)
            setLoading(false)
           })
         }
+  },[])
 
+  const deletePost = useCallback((post: any, event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const confirmDelete = confirm(`Are you quite certain you want to completely delete the post: ${post.title} ?`)
+    if (confirmDelete) {
+      setLoading(true)
+      fetch('/api/delete?id=' + post.id)
+        .then((res) => res.json())
+       .then((data) => {
+         setPageData(data)
+        setLoading(false)
+       })
+      }
   },[])
 
   const cancelPost = useCallback((event:any) => {
@@ -306,10 +319,14 @@ export default function Home() {
     return sanitizedValue;
   }
 
-  function renderItems(list: any[]) {
+  function renderItems(list: any[], listName: string, divided?: boolean) {
 
-    return (<>
-      <ul className='listItems'>
+    const toolTipText = listName==='main' ? 'archive' : 'restore'
+    console.log('tooltip: ', toolTipText)
+    const listKey = divided ? 'divided' : listName
+
+    return (
+      <ul className='listItems' key={listKey}>
       {list && list.length && (list.map((post : any, index: number) => {
         const newDate = new Date(post.updated_at)
         const timeZone = 'America/Los_Angeles';
@@ -317,19 +334,18 @@ export default function Home() {
         const dateString = format(utcDate, 'MMM dd, yyyy h:mm a', {timeZone})
   
         const rowStyle = post.user_deleted ? 'rowStyle markedAsDeleted' : 'rowStyle'
-        const iconStyle = post.user_deleted ? 'fas fa-undo fa-trash-alt' : 'fas fa-trash-alt'
-        return (<>
+        const iconStyle = post.user_deleted ? 'fas fa-undo' : 'fas fa-archive'
+        return (
         <li key={post.id} className={rowStyle} onClick={()=>editPost(post.id)}>
           <div className='dates'>{dateString}</div>
-         
           <div>{htmlUnescape(post.title)}</div>
           <div className='bodyText'>{htmlUnescape(post.post)}</div>
-          <div className='trash' onClick={(event)=>deletePost(post, event)}><i className={iconStyle}></i></div>
-          {/* <div>{post.category}</div> */}
-        </li></>
+          <div className={toolTipText} onClick={(event)=>archivePost(post, event)} title={toolTipText}><i className={iconStyle}></i></div>
+          { listName === 'archive' && (<div onClick={(event)=>deletePost(post, event)}>DELETE</div>)}
+        </li>
       )})
       )}     
-    </ul></>)
+    </ul>)
   }
 
   function expandDivider() {
@@ -342,9 +358,9 @@ export default function Home() {
       dividerClassName += ' expanded'
     }
     return (
-      <><div className={dividerClassName}><div onClick={expandDivider}>DIVIDER</div>
-      {   renderItems(list)  }
-      </div></>
+      <div className={dividerClassName} key='divider'><div onClick={expandDivider}>DIVIDER</div>
+      {   renderItems(list,'archive', true)  }
+      </div>
     )
   }
 
@@ -352,17 +368,17 @@ export default function Home() {
 
     let renderList = []
     let myJSX
-    let myJSX2
     let divider
     
     switch (listName) {
       case 'main':
         renderList = list
-        return renderItems(renderList)
+        return renderItems(renderList, 'main')
         break;
       case 'archive':
         renderList = list.slice(0, 5)
-        myJSX = renderItems(renderList)
+        myJSX = renderItems(renderList, 'archive')
+     
         renderList = list.slice(5, list.length);
         divider = renderDivider(renderList)
         return [myJSX, divider]
@@ -497,6 +513,17 @@ export default function Home() {
     )
   }, [editing, editPostId])
 
+  // const storycount = useMemo(()=> {
+  //   switch(tab) {
+  //     case 0:
+  //       return mainList.length
+  //     case 1:
+  //       return archiveList.length
+  //     default:
+  //       return 0
+  //   }
+  // },[tab])
+
 
   if (!data) return <p>No post data</p>
 
@@ -529,10 +556,12 @@ export default function Home() {
               Date <div className={'arrow ' + dateFilterDirection}></div></div>
             <div className={sortBy==='title' ? 'chip chosen' : 'chip'} onClick={chooseTitle}>
               Title<div className={'arrow ' + titleFilterDirection}></div></div>
-          </div>)}
+            <div className='counter'>Stories: {mainList.length}&nbsp; Archived: {archiveList.length}</div>
+          </div>
+          
+          )}
           <div className='list'>
               {tab === 0 && mainList.length > 0 && (renderListing(mainList, 'main'))}
-              {/* {mainList.length < 1 && (<><div>There are no stories yet posted.  Post a story!</div></>)} */}
               {tab === 1 && (renderListing(archiveList, 'archive'))}
               {tab === 2 && (renderForm)}
           </div>
