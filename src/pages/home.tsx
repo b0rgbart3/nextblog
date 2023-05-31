@@ -3,11 +3,13 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import { SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { format, zonedTimeToUtc } from 'date-fns-tz'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import '@fortawesome/fontawesome-free/css/all.min.css'
-import { sortByColumn } from '@/lib/sorting'
+import { sortByColumn } from '../lib/sorting'
 import Link from 'next/link';
 import { title } from 'process'
 import {htmlEscape, htmlUnescape} from 'escape-goat';
+import { useRouter } from 'next/router'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -38,6 +40,7 @@ export default function Home() {
   const [dateFilterDirection, setDateFilterDirection] = useState('desc')
   const [titleFilterDirection, setTitleFilterDirection] = useState('asc')
   const [expanded, setExpanded] = useState(false)
+  const router = useRouter();
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -72,6 +75,13 @@ export default function Home() {
     let postToEdit = data.filter((post) => post.id === editPostId)
     setEditingPostObject(postToEdit)
     console.log('about to edit ', postToEdit)
+
+  },[])
+
+  const readPost = useCallback((postId: number) => {
+
+    console.log('about to read ', postId)
+    router.push(`${postId}`)
 
   },[])
 
@@ -240,7 +250,7 @@ export default function Home() {
   const deletePost = useCallback((post: any, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
     event.stopPropagation()
-    
+
     const confirmDelete = confirm(`Are you quite certain you want to completely delete the post: ${htmlUnescape(post.title)} ?`)
     if (confirmDelete) {
       setLoading(true)
@@ -336,15 +346,28 @@ export default function Home() {
   
         const rowStyle = post.user_deleted ? 'rowStyle markedAsDeleted' : 'rowStyle'
         const iconStyle = post.user_deleted ? 'fas fa-undo' : 'fas fa-archive'
+        
         const trashStyle = 'fas fa-trash'
+        let bodySummary = ''
+        const bodyString = htmlUnescape(post.post)
+        const clickAction = listName === 'main' ? ()=>readPost(post.id) : undefined
+        const postSummaryClass = listName === 'main' ? 'postSummary': 'archivedPostSummary'
+        if (bodyString) {
+          bodySummary = bodyString.substring(0, 250)
+        }
 
         return (
-        <li key={post.id} className={rowStyle} onClick={()=>editPost(post.id)}>
-          <div className='dates'>{dateString}</div>
-          <div>{htmlUnescape(post.title)}</div>
-          <div className='bodyText'>{htmlUnescape(post.post)}</div>
+        <li key={post.id} className={rowStyle}>
+          <div className={postSummaryClass} onClick={clickAction}>
+            <div className='dates'>{dateString}</div>
+            <div>{htmlUnescape(post.title)}</div>
+            <div className='bodyText'>{bodySummary}</div>
+          </div>
+
           <div className={toolTipText} onClick={(event)=>archivePost(post, event)} title={toolTipText}><i className={iconStyle}></i></div>
-          { listName === 'archive' && (<div className='trash' title="DELETE FOREVER" onClick={(event)=>deletePost(post, event)}><i className={trashStyle}></i></div>)}
+          { listName === 'archive' && (<div className='trash' title="DELETE FOREVER" onClick={(event)=>deletePost(post, event)}>
+          <img src='closer.svg'/>
+          </div>)}
         </li>
       )})
       )}     
@@ -543,6 +566,7 @@ export default function Home() {
     <div className='homelinkDiv'>
       <div className='homelink'><Link href="/">Back home</Link></div>
       <div className='homelink'><Link href="/read">Read stories</Link></div>
+      <div className='homelink'><Link href="/contact">Contact</Link></div>
     </div>
     {!error && (<>
 

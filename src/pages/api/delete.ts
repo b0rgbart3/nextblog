@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { establishConnection, getData, simpleQuery } from '@/lib/db'
+import { establishConnection, getData, simpleQuery } from '../../lib/db'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 

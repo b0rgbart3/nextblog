@@ -174,7 +174,9 @@ padding:20px;
 }
 
 .bodyText {
-  font-size:20px;
+  font-size:14px;
+  line-height: 19px;;
+  color:#2c4e53;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -232,24 +234,24 @@ padding:20px;
 
 .trash {
   color:rgb(205, 242, 248, 1);
-  background: rgba(28, 41, 99,  .5);
+  background: rgba(28, 41, 99,  1);
   border-radius:50%;
   font-size:20px;
   width:40px;
   height:40px;
   position: absolute;
-  top:6px;
-  right:56px;
-  padding-top:8px;
-  padding-left:11px;
+  top:55px;
+  right:6px;
+  padding-top:10px;
+  padding-left:10px;
   padding-right:10px;
- 
+  opacity:.35;
 }
 
 .trash:hover {
   color:white;
   background: rgb(179, 23, 2);
-
+  opacity: 1;
 }
 
 .trash:active {
@@ -467,14 +469,39 @@ background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 
 }
 
 .rowStyle {
-
+  border-bottom:4px solid gray;
+  box-sizing: border-box;
   cursor: pointer;
+  width:100%;
+  position: relative;
 }
 
-.rowStyle:hover {
-  background:white;
-  border-bottom:1px solid rgb(151, 1, 151);
+.postSummary {
+  width: calc(100% - 50px);
+  border-radius:5px;
+  padding:10px;
+  background:rgb(241, 255, 255);
+  box-shadow: 0 0 8px rgba(128, 128, 128,.5);
 }
+
+.postSummary:hover {
+  background:white;
+  box-shadow: 0 0 8px rgba(128, 128, 128, 1);
+}
+
+
+.archivedPostSummary {
+  width: calc(100% - 50px);
+  border-radius:5px;
+  padding:10px;
+  background:rgba(216, 232, 232,);
+  box-shadow: 0 0 8px rgba(128, 128, 128,.5);
+}
+
+.archivedPostSummary:hover {
+
+}
+
 
 /* --------------  Landing page ---------------------- */
 
@@ -609,27 +636,58 @@ background: linear-gradient(175deg, rgba(255,255,255,1) 0%, rgba(157,236,224,1) 
   font-weight: 700;
   font-family: 'Carlito';
   letter-spacing: -1px;
+  padding-left:20px;
+  padding-right:20px;
 }
 
 .next-story {
   position: absolute;
-  top:2px;
+  bottom:2px;
   right:20px;
   transform: scaleY(0.6);
 }
 
 .right-arrow {
   user-select: none;
-  content: '';
-  border-style: solid;
-  border-radius:4px;
-  border-width: 24px;
-  border-color: transparent rgb(6, 46, 72)  rgb(6, 46, 72) transparent; 
+  width:80px;
+  height:90px;
+  max-width:80px;
+  max-height:90px;
+  overflow: hidden;
+  margin-top:5px;
+  position: relative;
+  left:-15px;
+  top:4px;
 }
 
+
 .right-arrow-adjust {
-  transform: rotate(-45deg);
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(128, 128, 128, 0);
+  cursor: pointer;
+  height:110px;
+  width:70px;
+  max-width:70px;
+  max-height:110px;
+  opacity:.5;
 }
+
+.right-arrow-adjust:hover {
+  background:rgb(145, 222, 215);
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgb(63, 173, 169);
+  cursor: pointer;
+  height:110px;
+  width:70px;
+  max-width:70px;
+  max-height:110px;
+  opacity:1;
+}
+
+
+
+
 .par {
   padding-top:10px;
   text-align: left;

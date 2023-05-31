@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getData, PostDataResponse } from '../../lib/db';
 import NextCors from 'nextjs-cors';
 import { merge_sort } from '../../../sortTest';
-import { sortByColumn } from '@/lib/sorting';
+import { sortByColumn } from '../../lib/sorting';
 
 export interface Post {
   id?: number;

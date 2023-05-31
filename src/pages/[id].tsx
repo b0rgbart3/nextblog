@@ -8,6 +8,7 @@ import { sortByColumn } from '../lib/sorting';
 import { htmlUnescape } from 'escape-goat';
 import NextArrow from '../components/next-arrow';
 
+import { useRouter } from 'next/router';
 
 
 export default function Read() {
@@ -19,6 +20,11 @@ export default function Read() {
     const [currentBody, setCurrentBody] = useState('')
     const [entryNumber, setEntryNumber] = useState(0)
 
+    const router = useRouter();
+    const { id } = router.query;
+    console.log('id: ', id);
+
+
     const setPageData = useCallback((data: any) => {
         console.log('In set page data.');
        // grabFromLocal();
@@ -27,7 +33,17 @@ export default function Read() {
 
         setMainList(mainListData)
 
-      
+        mainListData.forEach((post: any, index: number) => {
+            console.log('post: ', post.id)
+            if (parseInt(post.id) === parseInt(id as string)) {
+                console.log('found it')
+                setEntryNumber(index);
+            }
+        })
+
+        // setEntryNumber(requestedPost.id)
+        //console.log('requested: ', requestedPost);
+        console.log('first: ', mainListData[0])
         setData(data.data)
         } else {
           setError(true)
