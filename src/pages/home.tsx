@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import closer from '../../public/closer.svg'
+import editIcon from '../../public/edit.svg'
 import { Inter } from 'next/font/google'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { format, zonedTimeToUtc } from 'date-fns-tz'
@@ -65,15 +66,15 @@ export default function Home() {
 
 
   const editPost = useCallback((postId: number) => {
-
+    console.log('request to edit: ', postId);
     setEditPostId(postId)
     setTab(2)
     setEditing(true)
-    let postToEdit = data.filter((post) => post.id === editPostId)
+    let postToEdit = data.filter((post) => post.id === postId)
     setEditingPostObject(postToEdit)
     console.log('about to edit ', postToEdit)
 
-  },[])
+  },[data])
 
   const readPost = useCallback((postId: number) => {
 
@@ -248,7 +249,7 @@ export default function Home() {
     event.preventDefault()
     event.stopPropagation()
 
-    const confirmDelete = confirm(`Are you quite certain you want to completely delete the post: ${htmlUnescape(post.title)} ?`)
+    const confirmDelete = confirm(`Are you quite certain you want to completely delete the post: ${htmlUnescape(post.title)} ?  This will permanently delete this posting from the database and you will not be able to revert this. After you confirm this deletion there is no recovery mechanism to recover this post.  It will be gone forever.`)
     if (confirmDelete) {
       setLoading(true)
       fetch('/api/delete?id=' + post.id)
@@ -278,7 +279,7 @@ export default function Home() {
     let needToConfirm = false
     let confirmationString = 'Are you sure you want to cancel this post, and forget everything you wrote for it?'
     if (editing) {
-      confirmationString = 'Are you sure you want to cancel the editing of this post, and all the changes you made?'
+      confirmationString = 'Are you sure you want to cancel the editing of this post, and any of the changes you might have made?'
       const form = formRef.current as HTMLFormElement;
       
       const titleInput = form?.elements?.namedItem('title') as HTMLInputElement
@@ -312,7 +313,7 @@ export default function Home() {
     }
 
    
-  }, [editing, editPostId, editingPostObject])
+  }, [editing, editPostId, editingPostObject, data, mainList])
 
   useEffect(() => {
    grabData()
@@ -362,6 +363,7 @@ export default function Home() {
           </div>
 
           <div className={toolTipText} onClick={(event)=>archivePost(post, event)} title={toolTipText}><i className={iconStyle}></i></div>
+          { listName === 'main' && (<div className='edit' title='edit' onClick={()=>editPost(post.id)}><Image src={editIcon} alt={'edit'}/></div>)}
           { listName === 'archive' && (<div className='trash' title="DELETE FOREVER" onClick={(event)=>deletePost(post, event)}>
           <Image src={closer} alt={'Delete'}/>
           </div>)}
