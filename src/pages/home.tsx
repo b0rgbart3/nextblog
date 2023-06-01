@@ -366,7 +366,7 @@ export default function Home() {
 
           <div className={toolTipText} onClick={(event)=>archivePost(post, event)} title={toolTipText}><i className={iconStyle}></i></div>
           { listName === 'archive' && (<div className='trash' title="DELETE FOREVER" onClick={(event)=>deletePost(post, event)}>
-          <img src='closer.svg'/>
+          <img src='./closer.svg'/>
           </div>)}
         </li>
       )})
