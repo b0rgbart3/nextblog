@@ -233,19 +233,21 @@ padding:20px;
 }
 
 .trash {
-  color:rgb(205, 242, 248, 1);
-  background: rgba(28, 41, 99,  1);
+  background: rgb(81, 81, 81);
   border-radius:50%;
-  font-size:20px;
   width:40px;
   height:40px;
   position: absolute;
   top:55px;
   right:6px;
-  padding-top:10px;
-  padding-left:10px;
-  padding-right:10px;
   opacity:.35;
+}
+
+.trash img {
+  padding-top: 8px;
+  padding-left: 6px;
+  width: 32px;
+  height: 32px;
 }
 
 .trash:hover {

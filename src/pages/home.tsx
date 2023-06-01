@@ -1,17 +1,14 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import closer from '../../public/closer.svg'
 import { Inter } from 'next/font/google'
-import { SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { format, zonedTimeToUtc } from 'date-fns-tz'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import { sortByColumn } from '../lib/sorting'
 import Link from 'next/link';
-import { title } from 'process'
 import {htmlEscape, htmlUnescape} from 'escape-goat';
 import { useRouter } from 'next/router'
-
-const inter = Inter({ subsets: ['latin'] })
 
 
 export interface Post {
@@ -366,7 +363,7 @@ export default function Home() {
 
           <div className={toolTipText} onClick={(event)=>archivePost(post, event)} title={toolTipText}><i className={iconStyle}></i></div>
           { listName === 'archive' && (<div className='trash' title="DELETE FOREVER" onClick={(event)=>deletePost(post, event)}>
-          <img src='./closer.svg'/>
+          <Image src={closer} alt={'Delete'}/>
           </div>)}
         </li>
       )})
